@@ -1,13 +1,13 @@
 .upload-box {
   position: relative;
   border: 2px dashed var(--gray-300);
-  border-radius: var(--radius-xl);
-  background: var(--bg-secondary);
-  padding: var(--space-10);
+  border-radius: var(--radius-2xl);
+  background: white;
+  padding: 48px 32px;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-normal);
-  min-height: 250px;
+  min-height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,18 +16,22 @@
 .upload-box:hover {
   border-color: var(--primary-400);
   background: var(--primary-50);
+  box-shadow: var(--shadow-sm);
 }
 
 .upload-box.dragging {
   border-color: var(--primary-500);
   background: var(--primary-100);
-  transform: scale(1.02);
+  border-style: solid;
+  transform: scale(1.01);
+  box-shadow: var(--shadow-glow);
 }
 
 .upload-box.has-preview {
   padding: 0;
   border-style: solid;
   border-color: var(--primary-400);
+  overflow: hidden;
 }
 
 .upload-box.loading {
@@ -43,35 +47,51 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: 16px;
 }
 
 .upload-icon {
-  color: var(--primary-500);
-  margin-bottom: var(--space-2);
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-600);
+  margin-bottom: 8px;
+}
+
+.upload-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.5;
 }
 
 .upload-title {
-  font-size: var(--font-size-xl);
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--gray-800);
+  margin: 0;
 }
 
 .upload-subtitle {
-  color: var(--gray-600);
-  font-size: var(--font-size-sm);
+  color: var(--gray-500);
+  font-size: 0.9375rem;
+  margin: 0;
 }
 
 .upload-link {
   color: var(--primary-600);
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .upload-hint {
-  font-size: var(--font-size-xs);
+  font-size: 0.8125rem;
   color: var(--gray-400);
-  margin-top: var(--space-2);
+  margin: 8px 0 0 0;
 }
 
 /* Preview */
@@ -79,13 +99,11 @@
   width: 100%;
   height: 100%;
   position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
 }
 
 .preview-image {
   width: 100%;
-  height: 250px;
+  height: 280px;
   object-fit: cover;
 }
 
@@ -94,8 +112,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-  padding: var(--space-4);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  padding: 24px 20px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -103,52 +121,56 @@
 
 .preview-filename {
   color: white;
-  font-size: var(--font-size-sm);
+  font-size: 0.875rem;
   font-weight: 500;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  max-width: 60%;
+  max-width: 55%;
 }
 
 .preview-clear {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  padding: var(--space-2) var(--space-3);
+  padding: 8px 16px;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
+  font-size: 0.8125rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .preview-clear:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Loading Overlay */
 .upload-loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
-  border-radius: var(--radius-xl);
+  gap: 20px;
+  border-radius: var(--radius-2xl);
 }
 
 .upload-loading-spinner {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: 3px solid var(--gray-200);
   border-top-color: var(--primary-500);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 .upload-loading-overlay p {
   color: var(--gray-600);
-  font-size: var(--font-size-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  margin: 0;
 }
