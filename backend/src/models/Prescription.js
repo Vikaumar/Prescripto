@@ -1,5 +1,21 @@
 import mongoose from "mongoose";
 
+const chatMessageSchema = new mongoose.Schema({
+  role: {
+    type: String,
+    enum: ["user", "assistant"],
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const medicineSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,6 +24,12 @@ const medicineSchema = new mongoose.Schema({
     type: String,
   },
   frequency: {
+    type: String,
+  },
+  duration: {
+    type: String,
+  },
+  instructions: {
     type: String,
   },
 });
@@ -26,6 +48,27 @@ const prescriptionSchema = new mongoose.Schema(
     language: {
       type: String,
       default: "en",
+    },
+    // AI Analysis fields
+    isAnalyzed: {
+      type: Boolean,
+      default: false,
+    },
+    simplifiedExplanation: {
+      type: String,
+    },
+    diagnosis: {
+      type: String,
+    },
+    doctorNotes: {
+      type: String,
+    },
+    // Chat history for context
+    chatHistory: [chatMessageSchema],
+    // Cached translations
+    translations: {
+      type: Map,
+      of: Object,
     },
   },
   {
