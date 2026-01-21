@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import FormData from "form-data";
 
 // OCR.space API - Free tier: 25,000 requests/month
 // Get your free API key from: https://ocr.space/ocrapi/freekey
