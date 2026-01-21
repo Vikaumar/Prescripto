@@ -11,43 +11,105 @@ try {
     isApiConfigured = true;
     console.log("✅ Gemini AI initialized");
   } else {
-    console.warn("⚠️ GEMINI_API_KEY not set - AI will use mock data");
+    console.warn("⚠️ GEMINI_API_KEY not set - AI will use basic parsing");
   }
 } catch (error) {
-  console.warn("⚠️ Failed to initialize Gemini AI - using mock data");
+  console.warn("⚠️ Failed to initialize Gemini AI - using basic parsing");
 }
 
 /**
- * Mock analysis for testing when API is not configured
+ * Basic parsing fallback - extracts medicines from OCR text using regex patterns
+ * Used when AI API is unavailable or rate limited
  */
-const getMockAnalysis = (extractedText) => ({
-  medicines: [
-    {
-      name: "Paracetamol",
-      dosage: "500mg",
-      frequency: "Twice daily after food",
-      duration: "5 days",
-      instructions: "Take with warm water after meals"
-    },
-    {
-      name: "Cetirizine",
-      dosage: "10mg",
-      frequency: "Once at night",
-      duration: "7 days",
-      instructions: "Take at bedtime"
-    },
-    {
-      name: "Vitamin D3",
-      dosage: "60000 IU",
-      frequency: "Once a week",
-      duration: "8 weeks",
-      instructions: "Take with milk or fatty food"
+const parseOCRTextBasic = (extractedText) => {
+  console.log("📋 Using basic text parsing (AI unavailable)...");
+  
+  const medicines = [];
+  const text = extractedText.toLowerCase();
+  const lines = extractedText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  
+  // Common medicine patterns to look for
+  const medicinePatterns = [
+    /(\w+(?:\s+\w+)?)\s*(\d+\s*(?:mg|ml|g|mcg|iu|units?))/gi,
+    /(?:tab|tablet|cap|capsule|syrup|injection|inj|cream)\s*[.:]*\s*(\w+)/gi,
+  ];
+  
+  // Dosage patterns
+  const dosagePatterns = [
+    /(\d+\s*(?:mg|ml|g|mcg|iu))/gi,
+    /(\d+(?:\/\d+)?)\s*(?:times?|x)\s*(?:a\s*)?(?:day|daily)/gi,
+  ];
+  
+  // Look for medicine-like entries
+  lines.forEach(line => {
+    const lowerLine = line.toLowerCase();
+    
+    // Skip header-like lines
+    if (lowerLine.includes('dr.') || lowerLine.includes('doctor') || 
+        lowerLine.includes('patient') || lowerLine.includes('date') ||
+        lowerLine.includes('hospital') || lowerLine.includes('clinic')) {
+      return;
     }
-  ],
-  diagnosis: "Viral fever with allergic rhinitis",
-  doctorNotes: "Drink plenty of fluids. Rest well. Follow up in 1 week if symptoms persist.",
-  simplifiedExplanation: "Your doctor has prescribed medicines to help with your fever and allergies. Paracetamol will reduce your fever and pain. Cetirizine will help with your runny nose and sneezing. Vitamin D3 will boost your immunity. Make sure to take plenty of rest and drink lots of water."
-});
+    
+    // Check for medicine indicators
+    if (lowerLine.includes('mg') || lowerLine.includes('ml') || 
+        lowerLine.includes('tablet') || lowerLine.includes('capsule') ||
+        lowerLine.includes('syrup') || lowerLine.includes('daily') ||
+        lowerLine.includes('times') || lowerLine.includes('iu')) {
+      
+      // Try to extract medicine name (usually before the dosage)
+      const match = line.match(/^([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+\s*(?:mg|ml|mcg|iu|g))/i);
+      if (match) {
+        medicines.push({
+          name: match[1].trim(),
+          dosage: match[2].trim(),
+          frequency: extractFrequency(line) || "As prescribed",
+          duration: extractDuration(line) || "As advised",
+          instructions: line
+        });
+      }
+    }
+  });
+  
+  // Look for diagnosis
+  let diagnosis = null;
+  const diagnosisMatch = extractedText.match(/(?:diagnosis|dx|condition)[:\s]*([^\n]+)/i);
+  if (diagnosisMatch) {
+    diagnosis = diagnosisMatch[1].trim();
+  }
+  
+  return {
+    medicines: medicines.length > 0 ? medicines : [{
+      name: "Unable to parse medicines",
+      dosage: "N/A",
+      frequency: "Please consult your doctor",
+      duration: "N/A",
+      instructions: "The OCR text was captured but medicine names couldn't be automatically parsed."
+    }],
+    diagnosis: diagnosis || "Could not determine diagnosis from prescription",
+    doctorNotes: null,
+    simplifiedExplanation: `We found ${medicines.length} medicine(s) in your prescription. ${diagnosis ? `The diagnosis appears to be: ${diagnosis}.` : ''} Please review the extracted text below and consult your doctor for clarification.`
+  };
+};
+
+// Helper functions for basic parsing
+const extractFrequency = (text) => {
+  const patterns = [
+    /(\d+)\s*times?\s*(?:a\s*)?(?:day|daily)/i,
+    /(once|twice|thrice)\s*(?:a\s*)?(?:day|daily)/i,
+    /(morning|evening|night|bedtime)/i,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return match[0];
+  }
+  return null;
+};
+
+const extractDuration = (text) => {
+  const match = text.match(/(?:for\s+)?(\d+)\s*(?:days?|weeks?|months?)/i);
+  return match ? match[0] : null;
+};
 
 /**
  * Analyze prescription text and extract structured medicine information
@@ -55,10 +117,9 @@ const getMockAnalysis = (extractedText) => ({
  * @returns {Object} - Structured prescription analysis
  */
 export const analyzePrescription = async (extractedText) => {
-  // Return mock data if API is not configured
+  // If API not configured, use basic parsing
   if (!isApiConfigured || !model) {
-    console.log("📋 Using mock AI analysis for testing...");
-    return getMockAnalysis(extractedText);
+    return parseOCRTextBasic(extractedText);
   }
 
   const prompt = `You are a medical assistant helping patients understand their prescriptions. 
@@ -100,9 +161,14 @@ If any field is not found, use null. Return ONLY valid JSON, no markdown.`;
     return JSON.parse(cleanedResponse);
   } catch (error) {
     console.error("AI Analysis error:", error.message);
-    // Return mock data on error
-    console.log("📋 Falling back to mock AI analysis...");
-    return getMockAnalysis(extractedText);
+    
+    // Check if it's a rate limit error
+    if (error.message.includes('retry') || error.message.includes('quota') || error.message.includes('429')) {
+      console.log("⚠️ Gemini rate limited - using basic parsing fallback");
+    }
+    
+    // Fallback to basic parsing when API fails
+    return parseOCRTextBasic(extractedText);
   }
 };
 
@@ -114,13 +180,14 @@ If any field is not found, use null. Return ONLY valid JSON, no markdown.`;
  * @returns {string} - AI response
  */
 export const chatWithAI = async (message, prescriptionContext, chatHistory = []) => {
-  // Return mock response if API is not configured
+  // Use smart fallback if API not configured
   if (!isApiConfigured || !model) {
-    return getMockChatResponse(message);
+    return getSmartChatResponse(message, prescriptionContext);
   }
 
   const contextPrompt = prescriptionContext
     ? `The patient has a prescription with the following medicines: ${JSON.stringify(prescriptionContext.medicines || [])}. 
+       The diagnosis is: ${prescriptionContext.diagnosis || "Not specified"}.
        The simplified explanation is: ${prescriptionContext.simplifiedExplanation || "Not available"}.`
     : "No prescription context available.";
 
@@ -152,27 +219,39 @@ Respond naturally as a helpful assistant:`;
     return result.response.text();
   } catch (error) {
     console.error("Chat AI error:", error.message);
-    return getMockChatResponse(message);
+    return getSmartChatResponse(message, prescriptionContext);
   }
 };
 
 /**
- * Mock chat response for testing
+ * Smart chat response that uses prescription context
  */
-const getMockChatResponse = (message) => {
+const getSmartChatResponse = (message, prescriptionContext) => {
   const lowerMessage = message.toLowerCase();
+  const medicines = prescriptionContext?.medicines || [];
+  const diagnosis = prescriptionContext?.diagnosis || "not specified";
+  
+  if (lowerMessage.includes("diagnosis") || lowerMessage.includes("condition") || lowerMessage.includes("what do i have")) {
+    return `Based on your prescription, your diagnosis appears to be: ${diagnosis}. Please consult your doctor for more details about your condition.`;
+  }
+  
+  if (lowerMessage.includes("medicine") || lowerMessage.includes("what") && lowerMessage.includes("take")) {
+    if (medicines.length > 0) {
+      const medList = medicines.map(m => `${m.name} (${m.dosage})`).join(", ");
+      return `Your prescription includes: ${medList}. Please check the medicine cards above for detailed instructions on how to take each one.`;
+    }
+    return "I couldn't find specific medicine details in your prescription. Please check the extracted text or consult your doctor.";
+  }
   
   if (lowerMessage.includes("side effect")) {
-    return "Common side effects may include drowsiness, nausea, or mild stomach upset. If you experience any severe reactions, please contact your doctor immediately. Always take medicines as directed.";
-  } else if (lowerMessage.includes("when") || lowerMessage.includes("take")) {
-    return "Based on your prescription, take your medicines as directed by your doctor. Paracetamol is usually taken after food, Cetirizine at bedtime, and Vitamin D3 once a week with milk or fatty food.";
-  } else if (lowerMessage.includes("food")) {
-    return "Yes, it's generally recommended to take Paracetamol after meals to reduce stomach irritation. Vitamin D3 is best absorbed when taken with fatty foods.";
-  } else if (lowerMessage.includes("miss") || lowerMessage.includes("forgot")) {
-    return "If you miss a dose, take it as soon as you remember. However, if it's almost time for your next dose, skip the missed one. Never double up on doses to make up for a missed one.";
-  } else {
-    return "I'm here to help you understand your prescription! You can ask me about your medicines, when to take them, potential side effects, or any other questions you have. Just remember, I provide general information - always follow your doctor's specific advice.";
+    return "Common side effects vary by medicine. For your specific medicines, please consult the package insert or ask your pharmacist. If you experience any severe reactions like difficulty breathing or swelling, seek medical help immediately.";
   }
+  
+  if (lowerMessage.includes("food") || lowerMessage.includes("eat")) {
+    return "Generally, medicines should be taken as directed on your prescription - some after food, some before. Check the instructions for each medicine in your prescription.";
+  }
+  
+  return `I'm here to help you understand your prescription! Based on what I can see, your diagnosis is "${diagnosis}" and you have ${medicines.length} medicine(s) prescribed. Feel free to ask specific questions about your medicines, dosages, or when to take them.`;
 };
 
 /**
@@ -181,9 +260,8 @@ const getMockChatResponse = (message) => {
  * @returns {Object} - Medicine details
  */
 export const getMedicineInfo = async (medicineName) => {
-  // Return mock data if API is not configured
   if (!isApiConfigured || !model) {
-    return getMockMedicineInfo(medicineName);
+    return getBasicMedicineInfo(medicineName);
   }
 
   const prompt = `Provide information about the medicine "${medicineName}" in JSON format:
@@ -211,20 +289,20 @@ Return ONLY valid JSON, no markdown.`;
     return JSON.parse(cleanedResponse);
   } catch (error) {
     console.error("Medicine info error:", error.message);
-    return getMockMedicineInfo(medicineName);
+    return getBasicMedicineInfo(medicineName);
   }
 };
 
 /**
- * Mock medicine info for testing
+ * Basic medicine info fallback
  */
-const getMockMedicineInfo = (medicineName) => ({
+const getBasicMedicineInfo = (medicineName) => ({
   name: medicineName,
   genericName: medicineName,
-  uses: ["Pain relief", "Fever reduction", "Inflammation reduction"],
-  sideEffects: ["Nausea", "Dizziness", "Stomach upset"],
-  precautions: ["Do not exceed recommended dose", "Consult doctor if pregnant", "Avoid alcohol"],
-  simpleExplanation: `${medicineName} is a medicine that helps with pain and fever. Take it as directed by your doctor.`
+  uses: ["Please consult your doctor or pharmacist for specific uses"],
+  sideEffects: ["Side effects vary - consult package insert"],
+  precautions: ["Follow dosage as prescribed", "Inform your doctor of allergies", "Complete the full course"],
+  simpleExplanation: `${medicineName} is a medicine prescribed by your doctor. Please consult your pharmacist for detailed information about what it does and how to take it.`
 });
 
 export default { analyzePrescription, chatWithAI, getMedicineInfo };
