@@ -7,7 +7,7 @@ let isApiConfigured = false;
 try {
   if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_key_here") {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     isApiConfigured = true;
     console.log("✅ Gemini AI initialized");
   } else {
