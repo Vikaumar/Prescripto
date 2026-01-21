@@ -11,7 +11,7 @@ function ChatBot({ prescriptionId }) {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isMinimized, setIsMinimized] = useState(false);
+    const [isMinimized, setIsMinimized] = useState(true); // Start minimized
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
