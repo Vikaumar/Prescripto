@@ -127,6 +127,9 @@ const extractDuration = (text) => {
  * Falls back to local parsing if API unavailable
  */
 export const analyzePrescription = async (extractedText) => {
+  console.log("🔬 Analyzing prescription text...");
+  console.log("📝 Text length:", extractedText?.length || 0);
+  
   // First check if OCR text is valid
   if (!isValidOCRText(extractedText)) {
     console.log("⚠️ Invalid OCR text - returning empty result");
@@ -141,50 +144,85 @@ export const analyzePrescription = async (extractedText) => {
 
   // If Groq not configured, use local parsing
   if (!isApiConfigured || !client) {
+    console.log("⚠️ Groq not configured, using local parsing");
     return parseOCRTextLocally(extractedText);
   }
 
-  const prompt = `You are a medical prescription analyzer. Extract information from this prescription text.
+  const prompt = `You are an expert medical prescription analyzer. Your job is to extract medicine information from prescription text.
 
-Prescription text:
+PRESCRIPTION TEXT:
 """
 ${extractedText}
 """
 
-Return ONLY valid JSON (no markdown, no explanation):
+INSTRUCTIONS:
+1. Find ALL medicines mentioned (look for drug names, tablets, capsules, syrups)
+2. Common medicine indicators: Tab, Cap, Syrup, mg, ml, Inj, cream, ointment
+3. Look for dosage patterns like 500mg, 10ml, 1-0-1, BD, TDS, OD
+4. Look for frequencies like "twice daily", "morning-evening", "after food"
+5. If you see abbreviated instructions, expand them (BD = twice daily, TDS = three times daily, OD = once daily)
+6. Even partial information is valuable - include it
+
+RESPOND WITH ONLY THIS JSON (no markdown, no extra text):
 {
   "medicines": [
     {
-      "name": "medicine name",
-      "dosage": "amount like 500mg",
-      "frequency": "how often like twice daily",
-      "duration": "how long like 7 days",
-      "instructions": "special instructions or null"
+      "name": "full medicine name",
+      "dosage": "dose amount",
+      "frequency": "how often to take",
+      "duration": "how long to take",
+      "instructions": "any special instructions"
     }
   ],
-  "diagnosis": "condition if mentioned or null",
-  "doctorNotes": "additional notes or null",
-  "simplifiedExplanation": "Simple 1-2 sentence explanation for patient"
+  "diagnosis": "the condition/diagnosis if mentioned",
+  "doctorNotes": "any doctor notes",
+  "simplifiedExplanation": "Brief explanation of what these medicines are for"
 }
 
-If you cannot find any medicines, return: {"medicines": [], "diagnosis": null, "doctorNotes": null, "simplifiedExplanation": null}`;
+IMPORTANT: You MUST find at least one medicine if the text contains any drug names. Common drugs: Paracetamol, Amoxicillin, Azithromycin, Pantoprazole, Omeprazole, Cetirizine, Metformin, etc.`;
 
   try {
+    console.log("📤 Sending to Groq AI for analysis...");
+    
     const response = await client.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.3,
-      max_tokens: 1024
+      temperature: 0.2,
+      max_tokens: 1500
     });
 
     const text = response.choices[0]?.message?.content?.trim();
-    if (!text) throw new Error("Empty response");
+    console.log("📥 AI Response received, length:", text?.length);
+    
+    if (!text) {
+      console.log("⚠️ Empty AI response, falling back to local parsing");
+      return parseOCRTextLocally(extractedText);
+    }
 
-    // Clean and parse JSON
-    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    return JSON.parse(cleaned);
+    // Clean and parse JSON - handle various formats
+    let cleaned = text;
+    cleaned = cleaned.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+    cleaned = cleaned.replace(/^[^{]*/, ''); // Remove anything before first {
+    cleaned = cleaned.replace(/[^}]*$/, ''); // Remove anything after last }
+    cleaned = cleaned.trim();
+    
+    console.log("📋 Attempting to parse JSON...");
+    
+    const result = JSON.parse(cleaned);
+    
+    console.log("✅ AI Analysis complete!");
+    console.log("💊 Medicines found:", result.medicines?.length || 0);
+    
+    if (result.medicines && result.medicines.length > 0) {
+      result.medicines.forEach((m, i) => {
+        console.log(`   ${i + 1}. ${m.name} - ${m.dosage}`);
+      });
+    }
+    
+    return result;
   } catch (error) {
-    console.error("Groq AI error:", error.message);
+    console.error("❌ AI Analysis error:", error.message);
+    console.log("📋 Falling back to local parsing...");
     return parseOCRTextLocally(extractedText);
   }
 };
