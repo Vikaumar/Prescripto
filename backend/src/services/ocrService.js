@@ -25,22 +25,25 @@ try {
 const tryOCR = async (base64Image, mimeType, engine) => {
   const formBody = new URLSearchParams();
   formBody.append('apikey', OCR_SPACE_API_KEY);
-  formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+  
+  // Different engines need different image formats
+  if (engine === 2) {
+    // Engine 2 works better with URL-safe base64
+    formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+    formBody.append('filetype', mimeType.split('/')[1].toUpperCase());
+  } else {
+    formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+  }
+  
   formBody.append('language', 'eng');
   formBody.append('isOverlayRequired', 'false');
   formBody.append('detectOrientation', 'true');
   formBody.append('scale', 'true');
   formBody.append('isTable', 'true');
   formBody.append('OCREngine', engine.toString());
-  
-  // Enhanced settings for better accuracy
-  if (engine === 1 || engine === 2) {
-    formBody.append('isCreateSearchablePdf', 'false');
-    formBody.append('detectCheckbox', 'false');
-  }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+  const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout
 
   try {
     const response = await fetch('https://api.ocr.space/parse/image', {
@@ -53,13 +56,14 @@ const tryOCR = async (base64Image, mimeType, engine) => {
     clearTimeout(timeout);
 
     if (!response.ok) {
-      throw new Error(`API returned ${response.status}`);
+      throw new Error(`HTTP ${response.status}`);
     }
 
     const result = await response.json();
     
     if (result.IsErroredOnProcessing || result.OCRExitCode !== 1) {
-      throw new Error(result.ErrorMessage?.[0] || "Processing failed");
+      // Don't show confusing error messages
+      throw new Error("Engine failed");
     }
     
     if (!result.ParsedResults?.length) {
