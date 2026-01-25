@@ -2,60 +2,67 @@
    CHATBOT - Premium Design
    ============================================ */
 
-/* Toggle Button */
-.chat-toggle {
+/* Floating Action Button - Premium */
+.chatbot-fab {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
+  bottom: 28px;
+  right: 28px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35), var(--shadow-lg);
-  transition: all var(--transition-normal) var(--ease-out);
-  z-index: 999;
-}
-
-.chat-toggle:hover {
-  transform: scale(1.08) translateY(-2px);
-  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45), var(--shadow-xl);
-}
-
-.chat-toggle:active {
-  transform: scale(1);
-}
-
-.chat-toggle svg {
-  width: 28px;
-  height: 28px;
+  gap: 10px;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
-}
-
-.chat-toggle-label {
-  position: absolute;
-  right: 70px;
-  background: white;
-  color: var(--gray-800);
-  padding: 10px 16px;
-  border-radius: var(--radius-lg);
-  font-size: 0.875rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
   font-weight: 600;
-  white-space: nowrap;
-  box-shadow: var(--shadow-lg);
-  opacity: 0;
-  transform: translateX(10px);
-  transition: all var(--transition-normal);
-  pointer-events: none;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  overflow: hidden;
 }
 
-.chat-toggle:hover .chat-toggle-label {
-  opacity: 1;
-  transform: translateX(0);
+.chatbot-fab::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s ease;
+  border-radius: 50%;
+}
+
+.chatbot-fab:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(16, 185, 129, 0.5), 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.chatbot-fab:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.chatbot-fab:active {
+  transform: translateY(-2px) scale(1);
+}
+
+.fab-icon {
+  font-size: 1.25rem;
+  animation: fabPulse 2s infinite;
+}
+
+.fab-text {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@keyframes fabPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
 /* Chat Container */
