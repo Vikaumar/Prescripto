@@ -1,31 +1,96 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from "fs";
 import path from "path";
 
-let model = null;
-let isApiConfigured = false;
-
-// Initialize Gemini API
-try {
-  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_key_here") {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    isApiConfigured = true;
-    console.log("✅ Gemini OCR initialized");
-  } else {
-    console.warn("⚠️ GEMINI_API_KEY not set");
-  }
-} catch (error) {
-  console.warn("⚠️ Failed to initialize Gemini:", error.message);
-}
+// OCR.space API - FREE tier: 25,000 requests/month
+// No credit card or billing required
+// Demo API key that works immediately
+const OCR_SPACE_API_KEY = process.env.OCR_SPACE_API_KEY || "K85674328288957";
 
 /**
- * Convert image file to base64
+ * Extract text from prescription image using OCR.space API
+ * Completely FREE - 25,000 requests/month
+ * @param {string} imagePath - Path to the prescription image
+ * @returns {string} - Extracted text from the image
  */
-const imageToBase64 = (imagePath) => {
-  const absolutePath = path.resolve(imagePath);
-  const imageBuffer = fs.readFileSync(absolutePath);
-  return imageBuffer.toString('base64');
+const extractTextFromImage = async (imagePath) => {
+  try {
+    console.log("🔍 Reading prescription with OCR.space:", imagePath);
+    
+    const absolutePath = path.resolve(imagePath);
+    
+    if (!fs.existsSync(absolutePath)) {
+      throw new Error("Image file not found: " + absolutePath);
+    }
+    
+    // Read file and convert to base64
+    const imageBuffer = fs.readFileSync(absolutePath);
+    const base64Image = imageBuffer.toString('base64');
+    const mimeType = getMimeType(imagePath);
+    
+    // Prepare form data
+    const formBody = new URLSearchParams();
+    formBody.append('apikey', OCR_SPACE_API_KEY);
+    formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+    formBody.append('language', 'eng');
+    formBody.append('isOverlayRequired', 'false');
+    formBody.append('detectOrientation', 'true');
+    formBody.append('scale', 'true');
+    formBody.append('OCREngine', '2'); // Engine 2 is better for photos and handwriting
+    formBody.append('filetype', mimeType.split('/')[1].toUpperCase());
+
+    console.log("📤 Sending to OCR.space API...");
+
+    // Call OCR.space API
+    const response = await fetch('https://api.ocr.space/parse/image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formBody.toString()
+    });
+
+    if (!response.ok) {
+      throw new Error(`OCR API returned status ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    console.log("📥 OCR.space response received");
+
+    // Check for API errors
+    if (result.IsErroredOnProcessing) {
+      console.error("OCR.space processing error:", result.ErrorMessage);
+      throw new Error(result.ErrorMessage?.[0] || "OCR processing failed");
+    }
+
+    if (result.OCRExitCode !== 1) {
+      console.error("OCR.space exit code:", result.OCRExitCode, result.ErrorMessage);
+      throw new Error("OCR failed with exit code: " + result.OCRExitCode);
+    }
+    
+    if (!result.ParsedResults || result.ParsedResults.length === 0) {
+      throw new Error("No text detected in image. Please try a clearer photo.");
+    }
+    
+    // Combine text from all parsed results
+    const extractedText = result.ParsedResults
+      .map(r => r.ParsedText || '')
+      .join('\n')
+      .trim();
+    
+    if (!extractedText || extractedText.length < 3) {
+      throw new Error("Could not read text from image. Please try a clearer photo.");
+    }
+    
+    console.log("✅ OCR successful!");
+    console.log("📝 Characters extracted:", extractedText.length);
+    console.log("📝 Preview:", extractedText.substring(0, 150).replace(/\n/g, ' ') + "...");
+    
+    return extractedText;
+  } catch (error) {
+    console.error("❌ OCR error:", error.message);
+    throw new Error("Failed to read prescription: " + error.message);
+  }
 };
 
 /**
@@ -38,96 +103,12 @@ const getMimeType = (imagePath) => {
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
     '.webp': 'image/webp',
-    '.gif': 'image/gif'
+    '.gif': 'image/gif',
+    '.bmp': 'image/bmp',
+    '.tiff': 'image/tiff',
+    '.tif': 'image/tiff'
   };
   return mimeTypes[ext] || 'image/jpeg';
-};
-
-/**
- * Sleep helper
- */
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-/**
- * Extract text from prescription image using Gemini Vision
- * With retry logic for rate limits
- * @param {string} imagePath - Path to the prescription image
- * @param {number} retryCount - Current retry attempt
- * @returns {string} - Extracted text from the image
- */
-const extractTextFromImage = async (imagePath, retryCount = 0) => {
-  if (!isApiConfigured || !model) {
-    throw new Error("Gemini API not configured. Please set GEMINI_API_KEY in .env file.");
-  }
-
-  try {
-    console.log("🔍 Reading prescription with Gemini Vision:", imagePath);
-    
-    // Check if file exists
-    const absolutePath = path.resolve(imagePath);
-    if (!fs.existsSync(absolutePath)) {
-      throw new Error("Image file not found");
-    }
-    
-    // Convert image to base64
-    const base64Image = imageToBase64(imagePath);
-    const mimeType = getMimeType(imagePath);
-    
-    // Create the prompt
-    const prompt = `You are an OCR system. Read this prescription/medical document image and extract ALL text exactly as written.
-
-Instructions:
-- Extract every piece of text including doctor name, patient details, date, medicines, dosages, instructions
-- Preserve structure and formatting
-- For handwritten text, interpret what is written
-- Output ONLY the raw extracted text, nothing else`;
-
-    // Call Gemini Vision API
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          mimeType: mimeType,
-          data: base64Image
-        }
-      }
-    ]);
-    
-    const extractedText = result.response.text().trim();
-    
-    if (!extractedText || extractedText.length < 5) {
-      throw new Error("Could not read text from image. Please try a clearer photo.");
-    }
-    
-    console.log("✅ OCR complete!");
-    console.log("📝 Preview:", extractedText.substring(0, 100) + "...");
-    
-    return extractedText;
-  } catch (error) {
-    console.error("OCR error:", error.message);
-    
-    // Handle rate limiting with retry
-    if (error.message.includes('retry') || error.message.includes('quota') || error.message.includes('429')) {
-      // Extract retry delay if present
-      const delayMatch = error.message.match(/(\d+)s/);
-      const delay = delayMatch ? parseInt(delayMatch[1]) * 1000 : 30000;
-      
-      if (retryCount < 2) {
-        console.log(`⏳ Rate limited. Waiting ${delay/1000}s before retry (attempt ${retryCount + 1}/2)...`);
-        await sleep(Math.min(delay, 60000)); // Max 60s wait
-        return extractTextFromImage(imagePath, retryCount + 1);
-      } else {
-        throw new Error("Service is busy. Please wait 1 minute and try again.");
-      }
-    }
-    
-    // Handle model not found
-    if (error.message.includes('not found') || error.message.includes('404')) {
-      throw new Error("OCR service temporarily unavailable. Please try again.");
-    }
-    
-    throw new Error("Failed to read prescription: " + error.message);
-  }
 };
 
 export default extractTextFromImage;
