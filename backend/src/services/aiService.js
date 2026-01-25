@@ -24,8 +24,8 @@ try {
 const isValidOCRText = (text) => {
   if (!text || typeof text !== 'string') return false;
   const cleanText = text.trim();
-  // Must have at least 20 characters and more than 2 words
-  return cleanText.length >= 20 && cleanText.split(/\s+/).length >= 3;
+  // Accept text with at least 10 characters (lowered threshold for complex docs)
+  return cleanText.length >= 10;
 };
 
 /**
