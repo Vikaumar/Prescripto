@@ -148,38 +148,42 @@ export const analyzePrescription = async (extractedText) => {
     return parseOCRTextLocally(extractedText);
   }
 
-  const prompt = `You are an expert medical prescription analyzer. Your job is to extract medicine information from prescription text.
+  const prompt = `You are a medical prescription analyzer. Extract ONLY what is written in the text - DO NOT GUESS or make up medicine names.
 
 PRESCRIPTION TEXT:
 """
 ${extractedText}
 """
 
-INSTRUCTIONS:
-1. Find ALL medicines mentioned (look for drug names, tablets, capsules, syrups)
-2. Common medicine indicators: Tab, Cap, Syrup, mg, ml, Inj, cream, ointment
-3. Look for dosage patterns like 500mg, 10ml, 1-0-1, BD, TDS, OD
-4. Look for frequencies like "twice daily", "morning-evening", "after food"
-5. If you see abbreviated instructions, expand them (BD = twice daily, TDS = three times daily, OD = once daily)
-6. Even partial information is valuable - include it
+STRICT RULES:
+1. Extract ONLY medicines that are EXPLICITLY mentioned in the text
+2. DO NOT guess or infer medicine names that aren't written
+3. If a word looks like a medicine name, include it even if misspelled
+4. If you cannot find clear medicine names, return empty medicines array
+5. Look for patterns: medicine name + dosage (mg/ml) + frequency
 
-RESPOND WITH ONLY THIS JSON (no markdown, no extra text):
+Look for these medicine name patterns:
+- Words ending in: -cillin, -mycin, -mol, -prazole, -ine, -olol, -sartan
+- Words before dosages like "500mg", "250ml"
+- Words after "Rx", "Tab", "Cap", "Syrup"
+
+RESPOND WITH ONLY JSON (no markdown):
 {
   "medicines": [
     {
-      "name": "full medicine name",
-      "dosage": "dose amount",
-      "frequency": "how often to take",
-      "duration": "how long to take",
-      "instructions": "any special instructions"
+      "name": "exact medicine name from text",
+      "dosage": "dosage if found",
+      "frequency": "frequency if found",
+      "duration": "duration if found",
+      "instructions": "instructions if found"
     }
   ],
-  "diagnosis": "the condition/diagnosis if mentioned",
-  "doctorNotes": "any doctor notes",
-  "simplifiedExplanation": "Brief explanation of what these medicines are for"
+  "diagnosis": "diagnosis if mentioned or null",
+  "doctorNotes": "notes if found or null",
+  "simplifiedExplanation": "brief explanation or null"
 }
 
-IMPORTANT: You MUST find at least one medicine if the text contains any drug names. Common drugs: Paracetamol, Amoxicillin, Azithromycin, Pantoprazole, Omeprazole, Cetirizine, Metformin, etc.`;
+CRITICAL: If medicine names are not clearly visible in the text, return {"medicines": [], ...}. Never invent medicine names.`;
 
   try {
     console.log("📤 Sending to Groq AI for analysis...");
