@@ -1,62 +1,37 @@
+import Groq from "groq-sdk";
 import fs from "fs";
 import path from "path";
 
-// OCR.space API - FREE tier: 25,000 requests/month
-const OCR_SPACE_API_KEY = process.env.OCR_SPACE_API_KEY || "K85674328288957";
+let client = null;
+let isConfigured = false;
+
+// Initialize Groq client - FREE with vision support!
+try {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (apiKey && apiKey !== "your_groq_key_here") {
+    client = new Groq({ apiKey });
+    isConfigured = true;
+    console.log("✅ Groq Vision OCR initialized (FREE - great for handwriting!)");
+  } else {
+    console.warn("⚠️ GROQ_API_KEY not set - OCR won't work");
+  }
+} catch (error) {
+  console.warn("⚠️ Failed to initialize Groq:", error.message);
+}
 
 /**
- * Try OCR with a specific engine
- */
-const tryOCRWithEngine = async (base64Image, mimeType, engine) => {
-  const formBody = new URLSearchParams();
-  formBody.append('apikey', OCR_SPACE_API_KEY);
-  formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
-  formBody.append('language', 'eng');
-  formBody.append('isOverlayRequired', 'false');
-  formBody.append('detectOrientation', 'true');
-  formBody.append('scale', 'true');
-  formBody.append('isTable', 'true'); // Better for prescriptions with tables
-  formBody.append('OCREngine', engine.toString());
-
-  const response = await fetch('https://api.ocr.space/parse/image', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: formBody.toString()
-  });
-
-  if (!response.ok) {
-    throw new Error(`OCR API returned status ${response.status}`);
-  }
-
-  const result = await response.json();
-  
-  if (result.IsErroredOnProcessing || result.OCRExitCode !== 1) {
-    throw new Error(result.ErrorMessage?.[0] || "OCR processing failed");
-  }
-  
-  if (!result.ParsedResults || result.ParsedResults.length === 0) {
-    throw new Error("No text detected");
-  }
-  
-  const text = result.ParsedResults
-    .map(r => r.ParsedText || '')
-    .join('\n')
-    .trim();
-    
-  return text;
-};
-
-/**
- * Extract text from prescription image using OCR.space API
- * Tries Engine 1 (printed text) first, then Engine 2 (handwriting)
+ * Extract text from prescription image using Groq Vision
+ * Uses Llama 3.2 Vision - excellent for handwritten text!
  * @param {string} imagePath - Path to the prescription image
  * @returns {string} - Extracted text from the image
  */
 const extractTextFromImage = async (imagePath) => {
+  if (!isConfigured || !client) {
+    throw new Error("Groq API not configured. Please set GROQ_API_KEY in .env");
+  }
+
   try {
-    console.log("🔍 Reading prescription with OCR.space:", imagePath);
+    console.log("🔍 Reading prescription with Groq Vision:", imagePath);
     
     const absolutePath = path.resolve(imagePath);
     
@@ -64,57 +39,72 @@ const extractTextFromImage = async (imagePath) => {
       throw new Error("Image file not found: " + absolutePath);
     }
     
-    // Read file and convert to base64
+    // Read and convert to base64
     const imageBuffer = fs.readFileSync(absolutePath);
     const base64Image = imageBuffer.toString('base64');
     const mimeType = getMimeType(imagePath);
     
-    console.log("📤 Trying OCR Engine 1 (better for printed documents)...");
+    console.log("📤 Sending to Groq Vision API...");
     
-    let extractedText = '';
-    
-    // Try Engine 1 first (best for printed documents, tables)
-    try {
-      extractedText = await tryOCRWithEngine(base64Image, mimeType, 1);
-      console.log("✅ Engine 1 extracted", extractedText.length, "characters");
-    } catch (e1) {
-      console.log("⚠️ Engine 1 failed, trying Engine 2...");
-      
-      // Fallback to Engine 2 (better for handwriting)
-      try {
-        extractedText = await tryOCRWithEngine(base64Image, mimeType, 2);
-        console.log("✅ Engine 2 extracted", extractedText.length, "characters");
-      } catch (e2) {
-        console.error("❌ Both engines failed");
-        throw new Error("Could not read text from image");
-      }
-    }
-    
-    // If Engine 1 got very little, try Engine 2 as well and use the better result
-    if (extractedText.length < 50) {
-      console.log("⚠️ Low text count, trying Engine 2 for comparison...");
-      try {
-        const engine2Text = await tryOCRWithEngine(base64Image, mimeType, 2);
-        if (engine2Text.length > extractedText.length) {
-          console.log("✅ Engine 2 got more text:", engine2Text.length, "vs", extractedText.length);
-          extractedText = engine2Text;
+    // Use Llama 3.2 Vision model - excellent for handwritten text
+    const response = await client.chat.completions.create({
+      model: "llama-3.2-90b-vision-preview",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `You are an expert OCR system specialized in reading medical prescriptions, especially HANDWRITTEN ones.
+
+Extract ALL text from this prescription image. Include:
+- Doctor name and details
+- Patient name
+- Date
+- ALL medicines with dosages
+- Instructions for each medicine
+- Diagnosis if present
+- Any other notes
+
+IMPORTANT: 
+- Read handwritten text carefully
+- Include dosages like 500mg, 10ml, etc.
+- Include frequencies like "twice daily", "after food", etc.
+- If text is unclear, make your best interpretation
+
+Output ONLY the extracted text, nothing else. Preserve the structure as much as possible.`
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:${mimeType};base64,${base64Image}`
+              }
+            }
+          ]
         }
-      } catch (e) {
-        // Keep Engine 1 result
-      }
-    }
+      ],
+      temperature: 0.2,
+      max_tokens: 2000
+    });
+
+    const extractedText = response.choices[0]?.message?.content?.trim();
     
-    if (!extractedText || extractedText.length < 10) {
+    if (!extractedText || extractedText.length < 5) {
       throw new Error("Could not read text from image. Please try a clearer photo.");
     }
     
     console.log("✅ OCR complete!");
-    console.log("📝 Total characters:", extractedText.length);
+    console.log("📝 Characters extracted:", extractedText.length);
     console.log("📝 Preview:", extractedText.substring(0, 200).replace(/\n/g, ' '));
     
     return extractedText;
   } catch (error) {
     console.error("❌ OCR error:", error.message);
+    
+    if (error.message.includes('rate') || error.message.includes('429')) {
+      throw new Error("Rate limited. Please wait a moment and try again.");
+    }
+    
     throw new Error("Failed to read prescription: " + error.message);
   }
 };
@@ -129,10 +119,7 @@ const getMimeType = (imagePath) => {
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
     '.webp': 'image/webp',
-    '.gif': 'image/gif',
-    '.bmp': 'image/bmp',
-    '.tiff': 'image/tiff',
-    '.tif': 'image/tiff'
+    '.gif': 'image/gif'
   };
   return mimeTypes[ext] || 'image/jpeg';
 };
