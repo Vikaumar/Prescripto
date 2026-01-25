@@ -1,94 +1,154 @@
+/* ============================================
+   LOADER - Premium Design
+   ============================================ */
+
 .loader-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 40px;
+  padding: 48px;
 }
 
-.loader-spinner {
+/* Main Loader */
+.loader {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 80px;
+  height: 80px;
 }
 
-.loader-svg {
-  animation: spin 1s linear infinite;
-}
-
-.loader-circle {
-  stroke: var(--primary-500);
-  stroke-linecap: round;
-  stroke-dasharray: 80, 200;
-  stroke-dashoffset: 0;
-  animation: dash 1.5s ease-in-out infinite;
-}
-
-.loader-icon {
+.loader-ring {
   position: absolute;
-  font-size: 1.25rem;
-  animation: float 2s ease-in-out infinite;
+  inset: 0;
+  border: 3px solid transparent;
+  border-top-color: var(--primary-500);
+  border-radius: 50%;
+  animation: loaderSpin 1s linear infinite;
 }
 
-.loader-text {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--gray-500);
-  text-align: center;
-  margin: 0;
+.loader-ring:nth-child(2) {
+  inset: 8px;
+  border-top-color: var(--primary-400);
+  animation-duration: 1.5s;
+  animation-direction: reverse;
 }
 
-/* Sizes */
-.loader-sm .loader-svg {
-  width: 36px;
-  height: 36px;
+.loader-ring:nth-child(3) {
+  inset: 16px;
+  border-top-color: var(--primary-300);
+  animation-duration: 2s;
 }
 
-.loader-sm .loader-icon {
-  font-size: 1rem;
-}
-
-.loader-md .loader-svg {
-  width: 48px;
-  height: 48px;
-}
-
-.loader-md .loader-icon {
-  font-size: 1.25rem;
-}
-
-.loader-lg .loader-svg {
-  width: 64px;
-  height: 64px;
-}
-
-.loader-lg .loader-icon {
-  font-size: 1.5rem;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
+@keyframes loaderSpin {
   to { transform: rotate(360deg); }
 }
 
-@keyframes dash {
-  0% {
-    stroke-dasharray: 1, 200;
-    stroke-dashoffset: 0;
+/* Pulse Loader */
+.loader-pulse {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+  border-radius: 50%;
+  position: relative;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loader-pulse::before,
+.loader-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: pulseWave 1.5s ease-out infinite;
+}
+
+.loader-pulse::after {
+  animation-delay: 0.3s;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.9; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulseWave {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Dots Loader */
+.loader-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.loader-dots span {
+  width: 12px;
+  height: 12px;
+  background: var(--primary-500);
+  border-radius: 50%;
+  animation: dotBounce 1.4s infinite ease-in-out;
+}
+
+.loader-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+  background: var(--primary-400);
+}
+
+.loader-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+  background: var(--primary-300);
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.5;
   }
-  50% {
-    stroke-dasharray: 80, 200;
-    stroke-dashoffset: -35;
-  }
-  100% {
-    stroke-dasharray: 80, 200;
-    stroke-dashoffset: -125;
+  40% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+/* Loader Text */
+.loader-text {
+  margin-top: 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  animation: fadeInOut 1.5s infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Skeleton Loader */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-200) 0%,
+    var(--gray-100) 50%,
+    var(--gray-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.skeleton-text:last-child {
+  width: 60%;
+}
+
+.skeleton-card {
+  height: 120px;
+  margin-bottom: 16px;
 }
