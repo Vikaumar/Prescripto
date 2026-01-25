@@ -330,10 +330,55 @@ function App() {
       {/* Footer */}
       <footer className="footer">
         <div className="container">
-          <p>Made with care for patients everywhere</p>
-          <p className="footer-disclaimer">
-            This app provides information for educational purposes only. Always consult your doctor for medical advice.
-          </p>
+          <div className="footer-grid">
+            {/* Brand Column */}
+            <div className="footer-brand">
+              <div className="footer-logo">
+                <div className="footer-logo-mark">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                  </svg>
+                </div>
+                <span>Prescripto</span>
+              </div>
+              <p className="footer-tagline">Making prescriptions easier to understand for everyone.</p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="footer-links">
+              <h4>Features</h4>
+              <ul>
+                <li>Smart OCR</li>
+                <li>AI Analysis</li>
+                <li>Multi-language</li>
+                <li>24/7 Chat Support</li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div className="footer-links">
+              <h4>Resources</h4>
+              <ul>
+                <li>How It Works</li>
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+                <li>Contact Us</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="footer-bottom">
+            <p>© {new Date().getFullYear()} Prescripto. All rights reserved.</p>
+            <p className="footer-disclaimer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              For educational purposes only. Always consult your doctor for medical advice.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
