@@ -231,19 +231,33 @@ function App() {
                 </div>
               )}
 
-              {/* Medicine Cards */}
-              <div className="medicines-section">
-                <h3>Medicines ({displayMedicines.length})</h3>
-                <div className="medicines-grid">
-                  {displayMedicines.map((medicine, index) => (
-                    <MedicineCard
-                      key={index}
-                      medicine={medicine}
-                      onInfoClick={handleMedicineInfo}
-                    />
-                  ))}
+              {/* Medicine Cards - Only show if medicines found */}
+              {displayMedicines.length > 0 ? (
+                <div className="medicines-section">
+                  <h3>Medicines ({displayMedicines.length})</h3>
+                  <div className="medicines-grid">
+                    {displayMedicines.map((medicine, index) => (
+                      <MedicineCard
+                        key={index}
+                        medicine={medicine}
+                        onInfoClick={handleMedicineInfo}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="no-medicines-message">
+                  <div className="no-medicines-icon">📋</div>
+                  <h3>No Medicines Detected</h3>
+                  <p>We couldn't extract medicine information from your prescription. This could be because:</p>
+                  <ul>
+                    <li>The image quality is low or blurry</li>
+                    <li>The text is handwritten and hard to read</li>
+                    <li>The prescription format isn't recognized</li>
+                  </ul>
+                  <p>Please try uploading a clearer image or check the extracted text below.</p>
+                </div>
+              )}
 
               {/* Medicine Info Modal */}
               {medicineInfo && (
