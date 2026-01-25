@@ -1,133 +1,144 @@
+import { HfInference } from "@huggingface/inference";
 import Groq from "groq-sdk";
 import fs from "fs";
 import path from "path";
 
-// OCR.space free API key
-const OCR_SPACE_API_KEY = process.env.OCR_SPACE_API_KEY || "K85674328288957";
+// Initialize Hugging Face client - FREE (no billing required!)
+// Get free API key from: https://huggingface.co/settings/tokens
+let hfClient = null;
+const HF_API_KEY = process.env.HF_API_KEY || process.env.HUGGINGFACE_API_KEY;
+if (HF_API_KEY && HF_API_KEY !== "your_key_here") {
+  hfClient = new HfInference(HF_API_KEY);
+  console.log("✅ Hugging Face ML OCR initialized (FREE!)");
+} else {
+  console.warn("⚠️ HF_API_KEY not set - Get free key at: https://huggingface.co/settings/tokens");
+}
 
-// Initialize Groq for intelligent text extraction
+// Initialize Groq for text enhancement
 let groqClient = null;
 try {
   const apiKey = process.env.GROQ_API_KEY;
   if (apiKey && apiKey !== "your_key_here") {
     groqClient = new Groq({ apiKey });
-    console.log("✅ Hybrid OCR initialized (OCR.space + Groq AI)");
-  } else {
-    console.log("✅ OCR.space initialized (basic mode)");
   }
-} catch (e) {
-  console.log("✅ OCR.space initialized (basic mode)");
-}
+} catch (e) {}
 
 /**
- * Try OCR with specific engine and enhanced settings
+ * Extract text using Hugging Face Vision Model
+ * Uses Qwen2-VL - excellent for document OCR
  */
-const tryOCR = async (base64Image, mimeType, engine) => {
-  const formBody = new URLSearchParams();
-  formBody.append('apikey', OCR_SPACE_API_KEY);
-  
-  // Different engines need different image formats
-  if (engine === 2) {
-    // Engine 2 works better with URL-safe base64
-    formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
-    formBody.append('filetype', mimeType.split('/')[1].toUpperCase());
-  } else {
-    formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+const extractWithHuggingFace = async (imagePath) => {
+  if (!hfClient) {
+    throw new Error("Hugging Face not configured. Set HF_API_KEY in .env");
   }
-  
-  formBody.append('language', 'eng');
-  formBody.append('isOverlayRequired', 'false');
-  formBody.append('detectOrientation', 'true');
-  formBody.append('scale', 'true');
-  formBody.append('isTable', 'true');
-  formBody.append('OCREngine', engine.toString());
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout
+  const absolutePath = path.resolve(imagePath);
+  const imageBuffer = fs.readFileSync(absolutePath);
+  const base64Image = imageBuffer.toString('base64');
+  const mimeType = getMimeType(imagePath);
+
+  console.log("🤖 Using ML Vision Model (Qwen2-VL)...");
 
   try {
-    const response = await fetch('https://api.ocr.space/parse/image', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formBody.toString(),
-      signal: controller.signal
+    // Use Qwen2-VL for vision-to-text
+    const response = await hfClient.chatCompletion({
+      model: "Qwen/Qwen2-VL-7B-Instruct",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `You are an expert OCR system for reading medical prescriptions. Extract ALL text from this prescription image.
+
+IMPORTANT:
+1. Read both printed AND handwritten text
+2. Extract medicine names, dosages (mg, ml), frequencies
+3. Include doctor name, patient name, date
+4. Include diagnosis and doctor notes
+5. For unclear text, make your best medical interpretation
+
+Output ONLY the extracted text exactly as it appears, preserving structure. No explanations.`
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:${mimeType};base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 2000
     });
-    
-    clearTimeout(timeout);
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+    const text = response.choices?.[0]?.message?.content?.trim();
+    if (text && text.length > 10) {
+      return text;
     }
-
-    const result = await response.json();
+    throw new Error("ML model returned insufficient text");
+  } catch (error) {
+    console.log("⚠️ Qwen2-VL failed, trying BLIP...");
     
-    if (result.IsErroredOnProcessing || result.OCRExitCode !== 1) {
-      // Don't show confusing error messages
-      throw new Error("Engine failed");
+    // Fallback to image-to-text model
+    try {
+      const result = await hfClient.imageToText({
+        data: imageBuffer,
+        model: "Salesforce/blip-image-captioning-large"
+      });
+      
+      if (result.generated_text) {
+        return result.generated_text;
+      }
+    } catch (e) {
+      console.log("⚠️ BLIP also failed");
     }
     
-    if (!result.ParsedResults?.length) {
-      throw new Error("No results");
-    }
-    
-    return result.ParsedResults.map(r => r.ParsedText || '').join('\n').trim();
-  } catch (e) {
-    clearTimeout(timeout);
-    throw e;
+    throw error;
   }
 };
 
 /**
- * Use Groq AI to extract prescription info from raw OCR text
- * Even if OCR is messy, AI can understand context
+ * Enhance extracted text with Groq AI
  */
-const enhanceWithAI = async (rawText, imagePath) => {
+const enhanceWithGroq = async (rawText) => {
   if (!groqClient || rawText.length < 20) {
     return rawText;
   }
 
   try {
-    console.log("🧠 Enhancing OCR with Groq AI...");
+    console.log("🧠 Enhancing text with AI...");
     
     const response = await groqClient.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{
         role: "user",
-        content: `You are an expert at reading medical prescriptions. Below is raw OCR text from a prescription image that may have errors, misspellings, or be incomplete.
+        content: `Clean up this OCR text from a prescription. Fix obvious errors, identify medicine names correctly.
 
-RAW OCR TEXT:
+RAW TEXT:
 """
 ${rawText}
 """
 
-Your task:
-1. Clean up and correct obvious OCR errors
-2. Identify medicine names (fix misspellings like "Parac3tam0l" -> "Paracetamol")
-3. Extract dosages (mg, ml, etc.)
-4. Find frequencies (daily, twice daily, etc.)
-5. Identify doctor name, patient name, date if present
-6. Include any diagnosis
-
-Return ONLY the cleaned, corrected prescription text. Keep the structure but fix errors. If you can't determine something, leave it as-is.`
+Return only the cleaned prescription text, keeping structure.`
       }],
       temperature: 0.2,
       max_tokens: 1500
     });
 
     const enhanced = response.choices[0]?.message?.content?.trim();
-    if (enhanced && enhanced.length > rawText.length * 0.3) {
-      console.log("✅ AI enhancement complete!");
+    if (enhanced && enhanced.length > 10) {
+      console.log("✅ Text enhanced!");
       return enhanced;
     }
     return rawText;
   } catch (e) {
-    console.log("⚠️ AI enhancement skipped:", e.message);
     return rawText;
   }
 };
 
 /**
- * Extract text from prescription using multi-engine OCR + AI enhancement
+ * Main function: Extract text from prescription
  */
 const extractTextFromImage = async (imagePath) => {
   try {
@@ -135,82 +146,86 @@ const extractTextFromImage = async (imagePath) => {
     
     const absolutePath = path.resolve(imagePath);
     if (!fs.existsSync(absolutePath)) {
-      throw new Error("Image not found: " + absolutePath);
+      throw new Error("Image not found");
     }
-    
-    const imageBuffer = fs.readFileSync(absolutePath);
-    const base64Image = imageBuffer.toString('base64');
-    const mimeType = getMimeType(imagePath);
-    
-    let bestResult = { text: '', length: 0, engine: 0 };
-    
-    // Try Engine 1 first (best for printed/tables)
-    console.log("📤 Trying Engine 1 (Printed Text)...");
-    try {
-      const text = await tryOCR(base64Image, mimeType, 1);
-      console.log(`   Engine 1: ${text.length} chars`);
-      if (text.length > bestResult.length) {
-        bestResult = { text, length: text.length, engine: 1 };
-      }
-    } catch (e) {
-      console.log(`   Engine 1: failed - ${e.message}`);
-    }
-    
-    // Try Engine 2 (good for photos)
-    console.log("📤 Trying Engine 2 (Photo Text)...");
-    try {
-      const text = await tryOCR(base64Image, mimeType, 2);
-      console.log(`   Engine 2: ${text.length} chars`);
-      if (text.length > bestResult.length) {
-        bestResult = { text, length: text.length, engine: 2 };
-      }
-    } catch (e) {
-      console.log(`   Engine 2: failed - ${e.message}`);
-    }
-    
-    // Only try Engine 3 if we have poor results (it often hangs)
-    if (bestResult.length < 100) {
-      console.log("📤 Trying Engine 3 (Handwriting - may be slow)...");
+
+    let extractedText = '';
+
+    // Try Hugging Face ML first
+    if (hfClient) {
       try {
-        const text = await tryOCR(base64Image, mimeType, 3);
-        console.log(`   Engine 3: ${text.length} chars`);
-        if (text.length > bestResult.length) {
-          bestResult = { text, length: text.length, engine: 3 };
-        }
+        extractedText = await extractWithHuggingFace(imagePath);
+        console.log("✅ ML OCR complete! Chars:", extractedText.length);
       } catch (e) {
-        console.log(`   Engine 3: failed/timeout - ${e.message}`);
+        console.log("⚠️ ML OCR failed:", e.message);
       }
     }
-    
-    if (bestResult.length < 10) {
-      throw new Error("Could not read text. Please try a clearer image.");
+
+    // Fallback to OCR.space if ML fails
+    if (!extractedText || extractedText.length < 20) {
+      console.log("📤 Falling back to OCR.space...");
+      extractedText = await fallbackOCRSpace(imagePath);
     }
+
+    if (!extractedText || extractedText.length < 10) {
+      throw new Error("Could not read prescription. Please try a clearer image.");
+    }
+
+    // Enhance with Groq
+    const enhanced = await enhanceWithGroq(extractedText);
     
-    console.log(`✅ Best result: Engine ${bestResult.engine} (${bestResult.length} chars)`);
-    console.log("📝 Raw preview:", bestResult.text.substring(0, 150).replace(/\n/g, ' '));
+    console.log("📝 Final text length:", enhanced.length);
+    console.log("📝 Preview:", enhanced.substring(0, 150).replace(/\n/g, ' '));
     
-    // Enhance with AI if available
-    const enhancedText = await enhanceWithAI(bestResult.text, imagePath);
-    
-    console.log("📝 Final chars:", enhancedText.length);
-    
-    return enhancedText;
+    return enhanced;
   } catch (error) {
     console.error("❌ OCR error:", error.message);
     throw new Error("Failed to read prescription: " + error.message);
   }
 };
 
+/**
+ * Fallback OCR using OCR.space
+ */
+const fallbackOCRSpace = async (imagePath) => {
+  const absolutePath = path.resolve(imagePath);
+  const imageBuffer = fs.readFileSync(absolutePath);
+  const base64Image = imageBuffer.toString('base64');
+  const mimeType = getMimeType(imagePath);
+
+  const formBody = new URLSearchParams();
+  formBody.append('apikey', 'K85674328288957');
+  formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+  formBody.append('language', 'eng');
+  formBody.append('detectOrientation', 'true');
+  formBody.append('scale', 'true');
+  formBody.append('isTable', 'true');
+  formBody.append('OCREngine', '1');
+
+  const response = await fetch('https://api.ocr.space/parse/image', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formBody.toString()
+  });
+
+  const result = await response.json();
+  
+  if (result.ParsedResults?.length) {
+    return result.ParsedResults.map(r => r.ParsedText || '').join('\n').trim();
+  }
+  
+  throw new Error("OCR.space also failed");
+};
+
 const getMimeType = (imagePath) => {
   const ext = path.extname(imagePath).toLowerCase();
-  const mimeTypes = {
+  const types = {
     '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg', 
+    '.jpeg': 'image/jpeg',
     '.png': 'image/png',
-    '.webp': 'image/webp',
-    '.gif': 'image/gif'
+    '.webp': 'image/webp'
   };
-  return mimeTypes[ext] || 'image/jpeg';
+  return types[ext] || 'image/jpeg';
 };
 
 export default extractTextFromImage;
