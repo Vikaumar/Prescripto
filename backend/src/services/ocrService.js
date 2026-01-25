@@ -2,13 +2,55 @@ import fs from "fs";
 import path from "path";
 
 // OCR.space API - FREE tier: 25,000 requests/month
-// No credit card or billing required
-// Demo API key that works immediately
 const OCR_SPACE_API_KEY = process.env.OCR_SPACE_API_KEY || "K85674328288957";
 
 /**
+ * Try OCR with a specific engine
+ */
+const tryOCRWithEngine = async (base64Image, mimeType, engine) => {
+  const formBody = new URLSearchParams();
+  formBody.append('apikey', OCR_SPACE_API_KEY);
+  formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
+  formBody.append('language', 'eng');
+  formBody.append('isOverlayRequired', 'false');
+  formBody.append('detectOrientation', 'true');
+  formBody.append('scale', 'true');
+  formBody.append('isTable', 'true'); // Better for prescriptions with tables
+  formBody.append('OCREngine', engine.toString());
+
+  const response = await fetch('https://api.ocr.space/parse/image', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: formBody.toString()
+  });
+
+  if (!response.ok) {
+    throw new Error(`OCR API returned status ${response.status}`);
+  }
+
+  const result = await response.json();
+  
+  if (result.IsErroredOnProcessing || result.OCRExitCode !== 1) {
+    throw new Error(result.ErrorMessage?.[0] || "OCR processing failed");
+  }
+  
+  if (!result.ParsedResults || result.ParsedResults.length === 0) {
+    throw new Error("No text detected");
+  }
+  
+  const text = result.ParsedResults
+    .map(r => r.ParsedText || '')
+    .join('\n')
+    .trim();
+    
+  return text;
+};
+
+/**
  * Extract text from prescription image using OCR.space API
- * Completely FREE - 25,000 requests/month
+ * Tries Engine 1 (printed text) first, then Engine 2 (handwriting)
  * @param {string} imagePath - Path to the prescription image
  * @returns {string} - Extracted text from the image
  */
@@ -27,64 +69,48 @@ const extractTextFromImage = async (imagePath) => {
     const base64Image = imageBuffer.toString('base64');
     const mimeType = getMimeType(imagePath);
     
-    // Prepare form data
-    const formBody = new URLSearchParams();
-    formBody.append('apikey', OCR_SPACE_API_KEY);
-    formBody.append('base64Image', `data:${mimeType};base64,${base64Image}`);
-    formBody.append('language', 'eng');
-    formBody.append('isOverlayRequired', 'false');
-    formBody.append('detectOrientation', 'true');
-    formBody.append('scale', 'true');
-    formBody.append('OCREngine', '2'); // Engine 2 is better for photos and handwriting
-    formBody.append('filetype', mimeType.split('/')[1].toUpperCase());
-
-    console.log("📤 Sending to OCR.space API...");
-
-    // Call OCR.space API
-    const response = await fetch('https://api.ocr.space/parse/image', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formBody.toString()
-    });
-
-    if (!response.ok) {
-      throw new Error(`OCR API returned status ${response.status}`);
-    }
-
-    const result = await response.json();
+    console.log("📤 Trying OCR Engine 1 (better for printed documents)...");
     
-    console.log("📥 OCR.space response received");
-
-    // Check for API errors
-    if (result.IsErroredOnProcessing) {
-      console.error("OCR.space processing error:", result.ErrorMessage);
-      throw new Error(result.ErrorMessage?.[0] || "OCR processing failed");
-    }
-
-    if (result.OCRExitCode !== 1) {
-      console.error("OCR.space exit code:", result.OCRExitCode, result.ErrorMessage);
-      throw new Error("OCR failed with exit code: " + result.OCRExitCode);
+    let extractedText = '';
+    
+    // Try Engine 1 first (best for printed documents, tables)
+    try {
+      extractedText = await tryOCRWithEngine(base64Image, mimeType, 1);
+      console.log("✅ Engine 1 extracted", extractedText.length, "characters");
+    } catch (e1) {
+      console.log("⚠️ Engine 1 failed, trying Engine 2...");
+      
+      // Fallback to Engine 2 (better for handwriting)
+      try {
+        extractedText = await tryOCRWithEngine(base64Image, mimeType, 2);
+        console.log("✅ Engine 2 extracted", extractedText.length, "characters");
+      } catch (e2) {
+        console.error("❌ Both engines failed");
+        throw new Error("Could not read text from image");
+      }
     }
     
-    if (!result.ParsedResults || result.ParsedResults.length === 0) {
-      throw new Error("No text detected in image. Please try a clearer photo.");
+    // If Engine 1 got very little, try Engine 2 as well and use the better result
+    if (extractedText.length < 50) {
+      console.log("⚠️ Low text count, trying Engine 2 for comparison...");
+      try {
+        const engine2Text = await tryOCRWithEngine(base64Image, mimeType, 2);
+        if (engine2Text.length > extractedText.length) {
+          console.log("✅ Engine 2 got more text:", engine2Text.length, "vs", extractedText.length);
+          extractedText = engine2Text;
+        }
+      } catch (e) {
+        // Keep Engine 1 result
+      }
     }
     
-    // Combine text from all parsed results
-    const extractedText = result.ParsedResults
-      .map(r => r.ParsedText || '')
-      .join('\n')
-      .trim();
-    
-    if (!extractedText || extractedText.length < 3) {
+    if (!extractedText || extractedText.length < 10) {
       throw new Error("Could not read text from image. Please try a clearer photo.");
     }
     
-    console.log("✅ OCR successful!");
-    console.log("📝 Characters extracted:", extractedText.length);
-    console.log("📝 Preview:", extractedText.substring(0, 150).replace(/\n/g, ' ') + "...");
+    console.log("✅ OCR complete!");
+    console.log("📝 Total characters:", extractedText.length);
+    console.log("📝 Preview:", extractedText.substring(0, 200).replace(/\n/g, ' '));
     
     return extractedText;
   } catch (error) {
