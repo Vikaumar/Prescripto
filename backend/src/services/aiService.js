@@ -1,98 +1,109 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 
-let model = null;
+let client = null;
 let isApiConfigured = false;
 
-// Initialize Gemini API
+// Initialize Groq API - FREE with generous limits (30 RPM, 6000 RPD)
+// Get free API key from: https://console.groq.com/keys
 try {
-  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_key_here") {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const apiKey = process.env.GROQ_API_KEY;
+  if (apiKey && apiKey !== "your_key_here") {
+    client = new Groq({ apiKey });
     isApiConfigured = true;
-    console.log("✅ Gemini AI initialized");
+    console.log("✅ Groq AI initialized (FREE - no rate limits!)");
   } else {
-    console.warn("⚠️ GEMINI_API_KEY not set - AI will use basic parsing");
+    console.warn("⚠️ GROQ_API_KEY not set - using local parsing only");
   }
 } catch (error) {
-  console.warn("⚠️ Failed to initialize Gemini AI - using basic parsing");
+  console.warn("⚠️ Failed to initialize Groq AI:", error.message);
 }
 
 /**
- * Basic parsing fallback - extracts medicines from OCR text using regex patterns
- * Used when AI API is unavailable or rate limited
+ * Check if OCR text is valid (has enough content)
  */
-const parseOCRTextBasic = (extractedText) => {
-  console.log("📋 Using basic text parsing (AI unavailable)...");
+const isValidOCRText = (text) => {
+  if (!text || typeof text !== 'string') return false;
+  const cleanText = text.trim();
+  // Must have at least 20 characters and more than 2 words
+  return cleanText.length >= 20 && cleanText.split(/\s+/).length >= 3;
+};
+
+/**
+ * Parse OCR text locally - extracts medicines using patterns
+ * Returns EMPTY arrays if nothing is found (no fake data!)
+ */
+const parseOCRTextLocally = (extractedText) => {
+  console.log("📋 Using local text parsing...");
   
+  // If text is too short or invalid, return empty result
+  if (!isValidOCRText(extractedText)) {
+    console.log("⚠️ OCR text too short or invalid - returning empty result");
+    return {
+      medicines: [],
+      diagnosis: null,
+      doctorNotes: null,
+      simplifiedExplanation: null,
+      ocrFailed: true
+    };
+  }
+
   const medicines = [];
-  const text = extractedText.toLowerCase();
   const lines = extractedText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
   
-  // Common medicine patterns to look for
-  const medicinePatterns = [
-    /(\w+(?:\s+\w+)?)\s*(\d+\s*(?:mg|ml|g|mcg|iu|units?))/gi,
-    /(?:tab|tablet|cap|capsule|syrup|injection|inj|cream)\s*[.:]*\s*(\w+)/gi,
-  ];
-  
-  // Dosage patterns
-  const dosagePatterns = [
-    /(\d+\s*(?:mg|ml|g|mcg|iu))/gi,
-    /(\d+(?:\/\d+)?)\s*(?:times?|x)\s*(?:a\s*)?(?:day|daily)/gi,
-  ];
-  
-  // Look for medicine-like entries
+  // Medicine patterns
   lines.forEach(line => {
     const lowerLine = line.toLowerCase();
     
-    // Skip header-like lines
+    // Skip headers
     if (lowerLine.includes('dr.') || lowerLine.includes('doctor') || 
         lowerLine.includes('patient') || lowerLine.includes('date') ||
-        lowerLine.includes('hospital') || lowerLine.includes('clinic')) {
+        lowerLine.includes('hospital') || lowerLine.includes('clinic') ||
+        lowerLine.includes('prescription')) {
       return;
     }
     
-    // Check for medicine indicators
-    if (lowerLine.includes('mg') || lowerLine.includes('ml') || 
-        lowerLine.includes('tablet') || lowerLine.includes('capsule') ||
-        lowerLine.includes('syrup') || lowerLine.includes('daily') ||
-        lowerLine.includes('times') || lowerLine.includes('iu')) {
-      
-      // Try to extract medicine name (usually before the dosage)
-      const match = line.match(/^([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+\s*(?:mg|ml|mcg|iu|g))/i);
+    // Look for medicine patterns
+    const patterns = [
+      /^(\d+[\.\)]\s*)?([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+\s*(?:mg|ml|mcg|iu|g))/i,
+      /medicine[:\s]+([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+\s*(?:mg|ml|mcg|iu|g))/i,
+      /([A-Za-z]+(?:cillin|mycin|prazole|olol|pril|sartan|statin|formin|mab|nib))\s*(\d+\s*(?:mg|ml)?)?/i
+    ];
+    
+    for (const pattern of patterns) {
+      const match = line.match(pattern);
       if (match) {
-        medicines.push({
-          name: match[1].trim(),
-          dosage: match[2].trim(),
-          frequency: extractFrequency(line) || "As prescribed",
-          duration: extractDuration(line) || "As advised",
-          instructions: line
-        });
+        const name = match[2] || match[1];
+        const dosage = match[3] || match[2] || '';
+        if (name && name.length > 2) {
+          medicines.push({
+            name: name.trim(),
+            dosage: dosage.trim() || 'As prescribed',
+            frequency: extractFrequency(line) || 'As directed',
+            duration: extractDuration(line) || 'As advised',
+            instructions: line.includes('-') ? line.split('-').slice(1).join('-').trim() : null
+          });
+        }
+        break;
       }
     }
   });
   
-  // Look for diagnosis
+  // Extract diagnosis
   let diagnosis = null;
-  const diagnosisMatch = extractedText.match(/(?:diagnosis|dx|condition)[:\s]*([^\n]+)/i);
-  if (diagnosisMatch) {
-    diagnosis = diagnosisMatch[1].trim();
-  }
+  const diagMatch = extractedText.match(/(?:diagnosis|dx|condition)[:\s]+([^\n]+)/i);
+  if (diagMatch) diagnosis = diagMatch[1].trim();
   
   return {
-    medicines: medicines.length > 0 ? medicines : [{
-      name: "Unable to parse medicines",
-      dosage: "N/A",
-      frequency: "Please consult your doctor",
-      duration: "N/A",
-      instructions: "The OCR text was captured but medicine names couldn't be automatically parsed."
-    }],
-    diagnosis: diagnosis || "Could not determine diagnosis from prescription",
+    medicines,
+    diagnosis,
     doctorNotes: null,
-    simplifiedExplanation: `We found ${medicines.length} medicine(s) in your prescription. ${diagnosis ? `The diagnosis appears to be: ${diagnosis}.` : ''} Please review the extracted text below and consult your doctor for clarification.`
+    simplifiedExplanation: medicines.length > 0 
+      ? `Found ${medicines.length} medicine(s) in your prescription.`
+      : null,
+    ocrFailed: false
   };
 };
 
-// Helper functions for basic parsing
 const extractFrequency = (text) => {
   const patterns = [
     /(\d+)\s*times?\s*(?:a\s*)?(?:day|daily)/i,
@@ -112,197 +123,171 @@ const extractDuration = (text) => {
 };
 
 /**
- * Analyze prescription text and extract structured medicine information
- * @param {string} extractedText - OCR text from prescription
- * @returns {Object} - Structured prescription analysis
+ * Analyze prescription using Groq AI (FREE!)
+ * Falls back to local parsing if API unavailable
  */
 export const analyzePrescription = async (extractedText) => {
-  // If API not configured, use basic parsing
-  if (!isApiConfigured || !model) {
-    return parseOCRTextBasic(extractedText);
+  // First check if OCR text is valid
+  if (!isValidOCRText(extractedText)) {
+    console.log("⚠️ Invalid OCR text - returning empty result");
+    return {
+      medicines: [],
+      diagnosis: null,
+      doctorNotes: null,
+      simplifiedExplanation: null,
+      ocrFailed: true
+    };
   }
 
-  const prompt = `You are a medical assistant helping patients understand their prescriptions. 
-Analyze the following prescription text and extract information in JSON format.
+  // If Groq not configured, use local parsing
+  if (!isApiConfigured || !client) {
+    return parseOCRTextLocally(extractedText);
+  }
+
+  const prompt = `You are a medical prescription analyzer. Extract information from this prescription text.
 
 Prescription text:
 """
 ${extractedText}
 """
 
-Return a JSON object with:
+Return ONLY valid JSON (no markdown, no explanation):
 {
   "medicines": [
     {
       "name": "medicine name",
-      "dosage": "dosage amount (e.g., 500mg)",
-      "frequency": "how often to take (e.g., twice daily)",
-      "duration": "for how long (e.g., 7 days)",
-      "instructions": "special instructions (e.g., take after food)"
+      "dosage": "amount like 500mg",
+      "frequency": "how often like twice daily",
+      "duration": "how long like 7 days",
+      "instructions": "special instructions or null"
     }
   ],
-  "diagnosis": "diagnosed condition if mentioned",
-  "doctorNotes": "any additional notes from doctor",
-  "simplifiedExplanation": "A simple, easy-to-understand explanation of this prescription in 2-3 sentences for a patient with no medical background. Use simple words."
+  "diagnosis": "condition if mentioned or null",
+  "doctorNotes": "additional notes or null",
+  "simplifiedExplanation": "Simple 1-2 sentence explanation for patient"
 }
 
-If any field is not found, use null. Return ONLY valid JSON, no markdown.`;
+If you cannot find any medicines, return: {"medicines": [], "diagnosis": null, "doctorNotes": null, "simplifiedExplanation": null}`;
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = result.response.text();
-    
-    // Clean response - remove markdown code blocks if present
-    const cleanedResponse = response
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
-    
-    return JSON.parse(cleanedResponse);
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.3,
+      max_tokens: 1024
+    });
+
+    const text = response.choices[0]?.message?.content?.trim();
+    if (!text) throw new Error("Empty response");
+
+    // Clean and parse JSON
+    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(cleaned);
   } catch (error) {
-    console.error("AI Analysis error:", error.message);
-    
-    // Check if it's a rate limit error
-    if (error.message.includes('retry') || error.message.includes('quota') || error.message.includes('429')) {
-      console.log("⚠️ Gemini rate limited - using basic parsing fallback");
-    }
-    
-    // Fallback to basic parsing when API fails
-    return parseOCRTextBasic(extractedText);
+    console.error("Groq AI error:", error.message);
+    return parseOCRTextLocally(extractedText);
   }
 };
 
 /**
- * Chat with AI about prescription - helps patients ask questions
- * @param {string} message - User's question
- * @param {Object} prescriptionContext - Prescription data for context
- * @param {Array} chatHistory - Previous chat messages for context
- * @returns {string} - AI response
+ * Chat with AI about prescription
  */
 export const chatWithAI = async (message, prescriptionContext, chatHistory = []) => {
-  // Use smart fallback if API not configured
-  if (!isApiConfigured || !model) {
-    return getSmartChatResponse(message, prescriptionContext);
+  if (!isApiConfigured || !client) {
+    return getLocalChatResponse(message, prescriptionContext);
   }
 
-  const contextPrompt = prescriptionContext
-    ? `The patient has a prescription with the following medicines: ${JSON.stringify(prescriptionContext.medicines || [])}. 
-       The diagnosis is: ${prescriptionContext.diagnosis || "Not specified"}.
-       The simplified explanation is: ${prescriptionContext.simplifiedExplanation || "Not available"}.`
-    : "No prescription context available.";
-
-  const historyContext = chatHistory.length > 0
-    ? `Previous conversation:\n${chatHistory.map(h => `${h.role}: ${h.message}`).join("\n")}\n\n`
-    : "";
-
-  const prompt = `You are a friendly, helpful medical assistant chatbot for Prescripto app. 
-Your job is to help patients understand their prescriptions in simple language.
-
-${contextPrompt}
-
-${historyContext}
-
-Patient's question: "${message}"
-
-Guidelines:
-- Use simple, easy-to-understand language (imagine explaining to your grandmother)
-- Be warm, friendly, and reassuring
-- If asked about side effects or interactions, provide general info but always recommend consulting a doctor
-- Never diagnose or prescribe - only explain what's in the prescription
-- Keep responses concise (2-4 sentences unless details are needed)
-- If you don't know something, say so honestly
-
-Respond naturally as a helpful assistant:`;
+  const contextStr = prescriptionContext
+    ? `Patient's prescription: ${JSON.stringify(prescriptionContext.medicines || [])}. Diagnosis: ${prescriptionContext.diagnosis || 'Not specified'}.`
+    : "No prescription uploaded yet.";
 
   try {
-    const result = await model.generateContent(prompt);
-    return result.response.text();
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content: `You are a friendly medical assistant helping patients understand prescriptions. Be helpful, use simple language, and always recommend consulting a doctor for medical advice. ${contextStr}`
+        },
+        ...chatHistory.map(h => ({ role: h.role === 'user' ? 'user' : 'assistant', content: h.message || h.content })),
+        { role: "user", content: message }
+      ],
+      temperature: 0.7,
+      max_tokens: 300
+    });
+
+    return response.choices[0]?.message?.content || getLocalChatResponse(message, prescriptionContext);
   } catch (error) {
-    console.error("Chat AI error:", error.message);
-    return getSmartChatResponse(message, prescriptionContext);
+    console.error("Groq chat error:", error.message);
+    return getLocalChatResponse(message, prescriptionContext);
   }
 };
 
-/**
- * Smart chat response that uses prescription context
- */
-const getSmartChatResponse = (message, prescriptionContext) => {
-  const lowerMessage = message.toLowerCase();
-  const medicines = prescriptionContext?.medicines || [];
-  const diagnosis = prescriptionContext?.diagnosis || "not specified";
-  
-  if (lowerMessage.includes("diagnosis") || lowerMessage.includes("condition") || lowerMessage.includes("what do i have")) {
-    return `Based on your prescription, your diagnosis appears to be: ${diagnosis}. Please consult your doctor for more details about your condition.`;
+const getLocalChatResponse = (message, context) => {
+  const lower = message.toLowerCase();
+  const medicines = context?.medicines || [];
+  const diagnosis = context?.diagnosis || "not specified";
+
+  if (lower.includes('diagnosis') || lower.includes('condition')) {
+    return diagnosis !== "not specified" 
+      ? `Your diagnosis is: ${diagnosis}. Please consult your doctor for more details.`
+      : "I couldn't find a diagnosis in your prescription. Please ask your doctor.";
   }
   
-  if (lowerMessage.includes("medicine") || lowerMessage.includes("what") && lowerMessage.includes("take")) {
+  if (lower.includes('medicine') || lower.includes('take')) {
     if (medicines.length > 0) {
-      const medList = medicines.map(m => `${m.name} (${m.dosage})`).join(", ");
-      return `Your prescription includes: ${medList}. Please check the medicine cards above for detailed instructions on how to take each one.`;
+      return `Your prescription has ${medicines.length} medicine(s): ${medicines.map(m => m.name).join(', ')}. Check the cards above for details.`;
     }
-    return "I couldn't find specific medicine details in your prescription. Please check the extracted text or consult your doctor.";
+    return "No medicines were found in your prescription. Please check the extracted text or consult your doctor.";
   }
-  
-  if (lowerMessage.includes("side effect")) {
-    return "Common side effects vary by medicine. For your specific medicines, please consult the package insert or ask your pharmacist. If you experience any severe reactions like difficulty breathing or swelling, seek medical help immediately.";
-  }
-  
-  if (lowerMessage.includes("food") || lowerMessage.includes("eat")) {
-    return "Generally, medicines should be taken as directed on your prescription - some after food, some before. Check the instructions for each medicine in your prescription.";
-  }
-  
-  return `I'm here to help you understand your prescription! Based on what I can see, your diagnosis is "${diagnosis}" and you have ${medicines.length} medicine(s) prescribed. Feel free to ask specific questions about your medicines, dosages, or when to take them.`;
+
+  return "I'm here to help you understand your prescription. Ask me about your medicines, dosage, or diagnosis!";
 };
 
 /**
  * Get medicine information
- * @param {string} medicineName - Name of the medicine
- * @returns {Object} - Medicine details
  */
 export const getMedicineInfo = async (medicineName) => {
-  if (!isApiConfigured || !model) {
+  if (!isApiConfigured || !client) {
     return getBasicMedicineInfo(medicineName);
   }
 
-  const prompt = `Provide information about the medicine "${medicineName}" in JSON format:
-
+  try {
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{
+        role: "user",
+        content: `Provide info about "${medicineName}" medicine in JSON:
 {
   "name": "medicine name",
-  "genericName": "generic/scientific name",
-  "uses": ["common uses"],
-  "sideEffects": ["common side effects"],
-  "precautions": ["important precautions"],
-  "simpleExplanation": "A simple 1-2 sentence explanation of what this medicine does, for someone with no medical knowledge"
+  "genericName": "generic name",
+  "uses": ["uses"],
+  "sideEffects": ["side effects"],
+  "precautions": ["precautions"],
+  "simpleExplanation": "what it does in simple words"
 }
+Return ONLY valid JSON.`
+      }],
+      temperature: 0.3,
+      max_tokens: 500
+    });
 
-Return ONLY valid JSON, no markdown.`;
-
-  try {
-    const result = await model.generateContent(prompt);
-    const response = result.response.text();
-    
-    const cleanedResponse = response
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
-    
-    return JSON.parse(cleanedResponse);
+    const text = response.choices[0]?.message?.content?.trim();
+    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("Medicine info error:", error.message);
     return getBasicMedicineInfo(medicineName);
   }
 };
 
-/**
- * Basic medicine info fallback
- */
-const getBasicMedicineInfo = (medicineName) => ({
-  name: medicineName,
-  genericName: medicineName,
-  uses: ["Please consult your doctor or pharmacist for specific uses"],
-  sideEffects: ["Side effects vary - consult package insert"],
-  precautions: ["Follow dosage as prescribed", "Inform your doctor of allergies", "Complete the full course"],
-  simpleExplanation: `${medicineName} is a medicine prescribed by your doctor. Please consult your pharmacist for detailed information about what it does and how to take it.`
+const getBasicMedicineInfo = (name) => ({
+  name,
+  genericName: name,
+  uses: ["Consult your doctor for specific uses"],
+  sideEffects: ["Side effects vary - check package insert"],
+  precautions: ["Take as prescribed", "Complete the full course"],
+  simpleExplanation: `${name} is a medicine prescribed by your doctor.`
 });
 
 export default { analyzePrescription, chatWithAI, getMedicineInfo };
