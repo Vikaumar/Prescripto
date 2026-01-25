@@ -48,7 +48,7 @@ const extractTextFromImage = async (imagePath) => {
     
     // Use Llama 3.2 Vision model - excellent for handwritten text
     const response = await client.chat.completions.create({
-      model: "llama-3.2-90b-vision-preview",
+      model: "llama-3.2-11b-vision-preview",
       messages: [
         {
           role: "user",
