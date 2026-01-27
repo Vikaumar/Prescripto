@@ -148,24 +148,18 @@ export const analyzePrescription = async (extractedText) => {
     return parseOCRTextLocally(extractedText);
   }
 
-  const prompt = `You are a medical prescription analyzer. Extract ONLY what is written in the text - DO NOT GUESS or make up medicine names.
+  const prompt = `You are a medical prescription analyzer and medicine researcher. Extract medicines from the text and provide detailed information about each.
 
 PRESCRIPTION TEXT:
 """
 ${extractedText}
 """
 
-STRICT RULES:
-1. Extract ONLY medicines that are EXPLICITLY mentioned in the text
-2. DO NOT guess or infer medicine names that aren't written
+YOUR TASKS:
+1. Extract medicines that are EXPLICITLY mentioned in the text
+2. For EACH medicine found, use your medical knowledge to provide detailed information
 3. If a word looks like a medicine name, include it even if misspelled
 4. If you cannot find clear medicine names, return empty medicines array
-5. Look for patterns: medicine name + dosage (mg/ml) + frequency
-
-Look for these medicine name patterns:
-- Words ending in: -cillin, -mycin, -mol, -prazole, -ine, -olol, -sartan
-- Words before dosages like "500mg", "250ml"
-- Words after "Rx", "Tab", "Cap", "Syrup"
 
 RESPOND WITH ONLY JSON (no markdown):
 {
@@ -175,15 +169,25 @@ RESPOND WITH ONLY JSON (no markdown):
       "dosage": "dosage if found",
       "frequency": "frequency if found",
       "duration": "duration if found",
-      "instructions": "instructions if found"
+      "instructions": "instructions if found",
+      "whatItDoes": "Simple 1-2 sentence explanation of what this medicine does in the body",
+      "whyPrescribed": "Why doctor likely prescribed this (connect to diagnosis if available)",
+      "category": "Medicine category (e.g., Antibiotic, Pain reliever, Anti-diabetic)",
+      "keyWarnings": ["2-3 important warnings or things to be careful about"],
+      "foodInteractions": "What to take/avoid with this medicine (e.g., 'Take with food', 'Avoid alcohol')",
+      "commonSideEffects": ["2-3 most common side effects to be aware of"]
     }
   ],
   "diagnosis": "diagnosis if mentioned or null",
   "doctorNotes": "notes if found or null",
-  "simplifiedExplanation": "brief explanation or null"
+  "simplifiedExplanation": "A helpful 2-3 sentence summary explaining the overall prescription in simple terms",
+  "overallAdvice": "1-2 sentences of general advice for following this prescription"
 }
 
-CRITICAL: If medicine names are not clearly visible in the text, return {"medicines": [], ...}. Never invent medicine names.`;
+IMPORTANT: 
+- Use your medical knowledge to fill in the new fields (whatItDoes, whyPrescribed, etc.)
+- Keep explanations simple and patient-friendly
+- If medicine names are not clearly visible, return {"medicines": [], ...}. Never invent medicine names.`;
 
   try {
     console.log("📤 Sending to Groq AI for analysis...");
