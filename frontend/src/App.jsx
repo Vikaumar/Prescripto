@@ -231,6 +231,17 @@ function App() {
                 </div>
               )}
 
+              {/* Overall Advice from AI */}
+              {displayData?.overallAdvice && (
+                <div className="advice-card">
+                  <div className="advice-header">
+                    <span className="advice-icon">📝</span>
+                    <h4>Medication Guidance</h4>
+                  </div>
+                  <p>{displayData.overallAdvice}</p>
+                </div>
+              )}
+
               {/* Medicine Cards - Only show if medicines found */}
               {displayMedicines.length > 0 ? (
                 <div className="medicines-section">
