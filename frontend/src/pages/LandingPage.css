@@ -599,12 +599,12 @@
   }
 
   .footer-main {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 40px;
   }
 
   .footer-links {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
   }
 
   .footer-bottom {
@@ -624,6 +624,7 @@
   }
 
   .footer-links {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 24px;
   }
 }
