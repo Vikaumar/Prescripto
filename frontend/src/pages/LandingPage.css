@@ -699,9 +699,19 @@
     height: 1px;
   }
 
+  .section-header-light h2,
+  .section-header h2,
+  .gradient-title {
+    font-size: 2rem;
+  }
+
   .features-light-grid,
   .steps-grid {
     grid-template-columns: 1fr;
+  }
+
+  .step-number {
+    font-size: 2rem;
   }
 
   .footer-main {
@@ -709,24 +719,40 @@
     gap: 40px;
   }
 
+  .footer-brand-section {
+    max-width: 100%;
+  }
+
   .footer-links {
-    gap: 40px;
+    flex-wrap: wrap;
+    gap: 32px;
   }
 
   .footer-bottom {
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     text-align: center;
+  }
+
+  .footer-disclaimer {
+    justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .hero-badge {
     font-size: 0.75rem;
+    padding: 6px 14px;
+  }
+
+  .section-tag,
+  .section-tag-dark {
+    font-size: 0.75rem;
+    padding: 6px 16px;
   }
 
   .footer-links {
