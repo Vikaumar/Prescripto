@@ -113,7 +113,17 @@ function App() {
               </div>
               <h1>Prescripto</h1>
             </div>
-            <p className="tagline">Understand your prescription in simple words</p>
+            <div className="header-right">
+              <p className="tagline">Understand your prescription in simple words</p>
+              {user && (
+                <div className="user-menu">
+                  <span className="user-name">👤 {user.name}</span>
+                  <button className="logout-btn" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
