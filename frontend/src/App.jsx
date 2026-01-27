@@ -311,9 +311,9 @@ function App() {
               )}
 
               {/* Medicine Cards - Only show if medicines found */}
-              {displayMedicines.length > 0 ? (
+              {displayMedicines.length > 0 && (
                 <div className="medicines-section">
-                  <h3>Medicines ({displayMedicines.length})</h3>
+                  <h3>💊 Medicines ({displayMedicines.length})</h3>
                   <div className="medicines-grid">
                     {displayMedicines.map((medicine, index) => (
                       <MedicineCard
@@ -324,19 +324,88 @@ function App() {
                     ))}
                   </div>
                 </div>
-              ) : (
-                <div className="no-medicines-message">
-                  <div className="no-medicines-icon">📋</div>
-                  <h3>No Medicines Detected</h3>
-                  <p>We couldn't extract medicine information from your prescription. This could be because:</p>
-                  <ul>
-                    <li>The image quality is low or blurry</li>
-                    <li>The text is handwritten and hard to read</li>
-                    <li>The prescription format isn't recognized</li>
-                  </ul>
-                  <p>Please try uploading a clearer image or check the extracted text below.</p>
+              )}
+
+              {/* Lifestyle Advice Section */}
+              {displayData?.lifestyleAdvice?.length > 0 && (
+                <div className="lifestyle-section">
+                  <h3>🌿 Doctor's Advice & Recommendations</h3>
+                  <div className="lifestyle-grid">
+                    {displayData.lifestyleAdvice.map((item, index) => (
+                      <div key={index} className="lifestyle-card">
+                        <div className="lifestyle-number">{index + 1}</div>
+                        <div className="lifestyle-content">
+                          <p className="lifestyle-advice">{item.advice}</p>
+                          <div className="lifestyle-meta">
+                            {item.category && (
+                              <span className="lifestyle-category">{item.category}</span>
+                            )}
+                            {item.frequency && (
+                              <span className="lifestyle-frequency">📅 {item.frequency}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
+
+              {/* Do's and Don'ts Section */}
+              {(displayData?.dosAndDonts?.dos?.length > 0 || displayData?.dosAndDonts?.donts?.length > 0) && (
+                <div className="dos-donts-section">
+                  <h3>✅ Do's & ❌ Don'ts</h3>
+                  <div className="dos-donts-grid">
+                    {displayData.dosAndDonts?.dos?.length > 0 && (
+                      <div className="dos-card">
+                        <h4>✅ DO</h4>
+                        <ul>
+                          {displayData.dosAndDonts.dos.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {displayData.dosAndDonts?.donts?.length > 0 && (
+                      <div className="donts-card">
+                        <h4>❌ DON'T</h4>
+                        <ul>
+                          {displayData.dosAndDonts.donts.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Follow-up Instructions */}
+              {displayData?.followUp && (
+                <div className="followup-card">
+                  <div className="followup-header">
+                    <span className="followup-icon">📆</span>
+                    <h4>Follow-up Instructions</h4>
+                  </div>
+                  <p>{displayData.followUp}</p>
+                </div>
+              )}
+
+              {/* No Content Message - only if no medicines AND no lifestyle advice */}
+              {(!displayMedicines || displayMedicines.length === 0) &&
+                (!displayData?.lifestyleAdvice || displayData.lifestyleAdvice.length === 0) && (
+                  <div className="no-medicines-message">
+                    <div className="no-medicines-icon">📋</div>
+                    <h3>Limited Information Extracted</h3>
+                    <p>We couldn't extract detailed information from your prescription. This could be because:</p>
+                    <ul>
+                      <li>The image quality is low or blurry</li>
+                      <li>The text is handwritten and hard to read</li>
+                      <li>The prescription format isn't recognized</li>
+                    </ul>
+                    <p>Please check the extracted text below or try uploading a clearer image.</p>
+                  </div>
+                )}
 
               {/* Medicine Info Modal */}
               {medicineInfo && (

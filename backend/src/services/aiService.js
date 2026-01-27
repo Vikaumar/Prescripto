@@ -148,7 +148,7 @@ export const analyzePrescription = async (extractedText) => {
     return parseOCRTextLocally(extractedText);
   }
 
-  const prompt = `You are a medical prescription analyzer and medicine researcher. Extract medicines from the text and provide detailed information about each.
+  const prompt = `You are a medical prescription analyzer. Extract ALL information from the prescription including medicines, advice, and lifestyle recommendations.
 
 PRESCRIPTION TEXT:
 """
@@ -156,51 +156,64 @@ ${extractedText}
 """
 
 YOUR TASKS:
-1. Extract medicines that are EXPLICITLY mentioned in the text
-2. For EACH medicine found, use your medical knowledge to provide detailed information
-3. If a word looks like a medicine name, include it even if misspelled
-4. If you cannot find clear medicine names, return empty medicines array
-5. Extract patient, doctor, hospital, and date information
+1. Extract medicines that are mentioned in the text (if any)
+2. Extract ALL doctor's advice, recommendations, and lifestyle suggestions
+3. Extract patient, doctor, hospital, and date information
+4. Some prescriptions may have lifestyle advice instead of medicines - capture those too!
 
 RESPOND WITH ONLY JSON (no markdown):
 {
   "patientInfo": {
     "name": "patient name if found or null",
     "age": "patient age if found or null",
-    "gender": "patient gender if found or null"
+    "gender": "patient gender if found or null",
+    "address": "patient address if found or null"
   },
   "doctorInfo": {
     "name": "doctor name if found or null",
     "qualification": "MBBS, MD, etc. if found or null",
     "specialization": "specialization if found or null",
-    "hospital": "hospital or clinic name if found or null"
+    "hospital": "hospital or clinic name if found or null",
+    "contact": "phone/email if found or null"
   },
   "prescriptionDate": "date of prescription if found or null",
   "medicines": [
     {
-      "name": "exact medicine name from text",
+      "name": "medicine name from text",
       "dosage": "dosage if found",
       "frequency": "frequency if found",
       "duration": "duration if found",
       "instructions": "instructions if found",
-      "whatItDoes": "Simple 1-2 sentence explanation of what this medicine does in the body",
-      "whyPrescribed": "Why doctor likely prescribed this (connect to diagnosis if available)",
-      "category": "Medicine category (e.g., Antibiotic, Pain reliever, Anti-diabetic)",
-      "keyWarnings": ["2-3 important warnings or things to be careful about"],
-      "foodInteractions": "What to take/avoid with this medicine (e.g., 'Take with food', 'Avoid alcohol')",
-      "commonSideEffects": ["2-3 most common side effects to be aware of"]
+      "whatItDoes": "Simple 1-2 sentence explanation of what this medicine does",
+      "whyPrescribed": "Why doctor likely prescribed this",
+      "category": "Medicine category (e.g., Antibiotic, Pain reliever)",
+      "keyWarnings": ["2-3 important warnings"],
+      "foodInteractions": "What to take/avoid with this medicine",
+      "commonSideEffects": ["2-3 most common side effects"]
     }
   ],
+  "lifestyleAdvice": [
+    {
+      "advice": "The specific advice or recommendation",
+      "category": "Category like 'Mental Health', 'Diet', 'Exercise', 'Behavior', 'Life Principle'",
+      "frequency": "How often to follow (e.g., 'Daily', 'Morning & Evening', 'As needed')"
+    }
+  ],
+  "dosAndDonts": {
+    "dos": ["Things patient should do"],
+    "donts": ["Things patient should avoid"]
+  },
   "diagnosis": "diagnosis if mentioned or null",
-  "doctorNotes": "notes if found or null",
-  "simplifiedExplanation": "A helpful 2-3 sentence summary explaining the overall prescription in simple terms",
+  "doctorNotes": "any additional notes from doctor or null",
+  "followUp": "follow-up instructions if any or null",
+  "simplifiedExplanation": "A helpful 2-3 sentence summary explaining the overall prescription",
   "overallAdvice": "1-2 sentences of general advice for following this prescription"
 }
 
 IMPORTANT: 
-- Use your medical knowledge to fill in the new fields (whatItDoes, whyPrescribed, etc.)
-- Keep explanations simple and patient-friendly
-- If medicine names are not clearly visible, return {"medicines": [], ...}. Never invent medicine names.`;
+- Capture EVERYTHING the doctor has written - medicines, advice, lifestyle tips, do's and don'ts
+- Some prescriptions may be about mental health, lifestyle, or general wellness - treat these as valid
+- Keep explanations simple and patient-friendly`;
 
   try {
     console.log("📤 Sending to Groq AI for analysis...");
@@ -209,7 +222,7 @@ IMPORTANT:
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.2,
-      max_tokens: 1500
+      max_tokens: 2000
     });
 
     const text = response.choices[0]?.message?.content?.trim();

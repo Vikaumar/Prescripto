@@ -532,12 +532,206 @@
   gap: 8px;
 }
 
-.medicines-section h3::before {
+/* ========== LIFESTYLE ADVICE SECTION ========== */
+.lifestyle-section {
+  margin: 28px 0;
+}
+
+.lifestyle-section h3 {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.lifestyle-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lifestyle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #86efac;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  transition: all 0.3s ease;
+}
+
+.lifestyle-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.lifestyle-number {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.lifestyle-content {
+  flex: 1;
+}
+
+.lifestyle-advice {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #166534;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.lifestyle-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lifestyle-category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #15803d;
+  background: rgba(34, 197, 94, 0.2);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.lifestyle-frequency {
+  font-size: 0.75rem;
+  color: #166534;
+}
+
+/* ========== DO'S AND DON'TS SECTION ========== */
+.dos-donts-section {
+  margin: 28px 0;
+}
+
+.dos-donts-section h3 {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.dos-donts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .dos-donts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dos-card, .donts-card {
+  border-radius: var(--radius-xl);
+  padding: 20px;
+}
+
+.dos-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #86efac;
+}
+
+.donts-card {
+  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+  border: 1px solid #fca5a5;
+}
+
+.dos-card h4, .donts-card h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dos-card h4 {
+  color: #166534;
+}
+
+.donts-card h4 {
+  color: #991b1b;
+}
+
+.dos-card ul, .donts-card ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.dos-card li {
+  color: #166534;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.donts-card li {
+  color: #991b1b;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* ========== FOLLOW-UP CARD ========== */
+.followup-card {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border: 1px solid #d8b4fe;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin: 28px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.followup-card::before {
   content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 4px;
-  height: 20px;
-  background: var(--primary-500);
-  border-radius: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, #a855f7, #7c3aed);
+}
+
+.followup-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.followup-icon {
+  font-size: 1.25rem;
+}
+
+.followup-header h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #6b21a8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.followup-card p {
+  margin: 0;
+  padding-left: 36px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #581c87;
 }
 
 .medicines-grid {
