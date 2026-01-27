@@ -60,7 +60,7 @@ function LandingPage() {
             </section>
 
             {/* Features Section - Light Background */}
-            <section className="features-light">
+            <section className="features-light" id="features">
                 <div className="landing-container">
                     <div className="features-light-grid">
                         <div className="feature-light-card">
@@ -101,7 +101,7 @@ function LandingPage() {
             </section>
 
             {/* How It Works Section - Dark Background */}
-            <section className="how-it-works">
+            <section className="how-it-works" id="how-it-works">
                 <div className="landing-container">
                     <div className="section-header">
                         <h2>How It Works</h2>
