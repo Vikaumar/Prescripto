@@ -84,29 +84,40 @@
 }
 
 /* User Menu */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
 .user-menu {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 8px 12px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 100px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
 .user-name {
   font-size: 0.875rem;
-  color: var(--gray-600);
-  font-weight: 500;
+  color: var(--gray-700);
+  font-weight: 600;
 }
 
 .logout-btn {
-  padding: 8px 16px;
-  background: var(--gray-100);
+  padding: 6px 14px;
+  background: white;
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
+  border-radius: 100px;
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--gray-600);
@@ -115,8 +126,9 @@
 }
 
 .logout-btn:hover {
-  background: var(--gray-200);
-  color: var(--gray-800);
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 
 /* Auth Loading */
