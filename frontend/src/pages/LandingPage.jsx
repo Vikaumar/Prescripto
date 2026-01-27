@@ -39,8 +39,16 @@ function LandingPage() {
 
             {/* Hero Section */}
             <section className="hero">
+                <div className="hero-bg-effects">
+                    <div className="hero-glow glow-1"></div>
+                    <div className="hero-glow glow-2"></div>
+                </div>
                 <div className="landing-container">
                     <div className="hero-content">
+                        <div className="hero-badge">
+                            <span className="badge-dot"></span>
+                            <span>AI-Powered Prescription Analysis</span>
+                        </div>
                         <h1 className="hero-title">
                             Understand Your
                             <span className="gradient-text"> Prescription</span>
@@ -54,6 +62,25 @@ function LandingPage() {
                             <Link to={isAuthenticated ? "/app" : "/signup"} className="cta-btn primary">
                                 Start Analyzing →
                             </Link>
+                            <a href="#how-it-works" className="cta-btn secondary">
+                                See How It Works
+                            </a>
+                        </div>
+                        <div className="hero-stats">
+                            <div className="stat-item">
+                                <span className="stat-value">95%</span>
+                                <span className="stat-label">OCR Accuracy</span>
+                            </div>
+                            <div className="stat-divider"></div>
+                            <div className="stat-item">
+                                <span className="stat-value">13+</span>
+                                <span className="stat-label">Languages</span>
+                            </div>
+                            <div className="stat-divider"></div>
+                            <div className="stat-item">
+                                <span className="stat-value">Free</span>
+                                <span className="stat-label">To Use</span>
+                            </div>
                         </div>
                     </div>
                 </div>
