@@ -380,6 +380,55 @@
   margin-bottom: 28px;
 }
 
+/* ========== ADVICE CARD ========== */
+.advice-card {
+  background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.advice-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+}
+
+.advice-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.advice-icon {
+  font-size: 1.25rem;
+}
+
+.advice-header h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.advice-card p {
+  margin: 0;
+  padding-left: 36px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #78350f;
+}
+
 .medicines-section h3 {
   margin-bottom: 20px;
   font-size: 1rem;
