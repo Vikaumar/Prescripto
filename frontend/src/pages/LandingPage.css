@@ -533,28 +533,32 @@
 }
 
 .step-card p {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: #94a3b8;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7;
+}
+
+.steps-cta {
+  text-align: center;
 }
 
 /* ========== Premium Footer ========== */
 .landing-footer {
-  padding: 60px 0 0;
-  background: #0f172a;
+  padding: 80px 0 0;
+  background: #0a0f1a;
 }
 
 .footer-main {
   display: flex;
   justify-content: space-between;
-  gap: 80px;
-  padding-bottom: 40px;
+  gap: 60px;
+  padding-bottom: 48px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-brand-section {
-  max-width: 280px;
+  max-width: 320px;
 }
 
 .footer-logo {
