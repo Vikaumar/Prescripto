@@ -104,26 +104,24 @@ function App() {
         <div className="container">
           <div className="header-content">
             <div className="logo">
-              <div className="logo-mark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10.5 20.5L3 13l7.5-7.5" />
-                  <path d="M21 12H3" />
-                  <path d="M13.5 3.5L21 11l-7.5 7.5" />
-                </svg>
+              <div className="pill-logo">
+                <div className="pill-top"></div>
+                <div className="pill-bottom"></div>
               </div>
               <h1>Prescripto</h1>
             </div>
-            <div className="header-right">
-              <p className="tagline">Understand your prescription in simple words</p>
-              {user && (
-                <div className="user-menu">
-                  <span className="user-name">👤 {user.name}</span>
-                  <button className="logout-btn" onClick={handleLogout}>
-                    Logout
-                  </button>
+            <p className="tagline">Understand your prescription in simple words</p>
+            {user && (
+              <div className="user-menu">
+                <div className="user-avatar">
+                  {user.name.charAt(0).toUpperCase()}
                 </div>
-              )}
-            </div>
+                <span className="user-name">{user.name}</span>
+                <button className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
