@@ -319,8 +319,11 @@
 
 /* ========== Features Light Section ========== */
 .features-light {
-  padding: 60px 0;
+  min-height: 100vh;
+  padding: 80px 0;
   background: #e5e5e5;
+  display: flex;
+  align-items: center;
 }
 
 .features-light-grid {
@@ -383,8 +386,11 @@
 
 /* ========== How It Works Section ========== */
 .how-it-works {
+  min-height: 100vh;
   padding: 80px 0;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  display: flex;
+  align-items: center;
 }
 
 .section-header {
