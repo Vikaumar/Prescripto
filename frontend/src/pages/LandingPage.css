@@ -595,16 +595,20 @@
 
 .footer-links {
   display: flex;
-  gap: 80px;
+  gap: 60px;
+}
+
+.footer-col {
+  min-width: 140px;
 }
 
 .footer-col h4 {
-  color: white;
-  font-size: 0.8125rem;
+  color: #94a3b8;
+  font-size: 0.75rem;
   font-weight: 600;
   margin: 0 0 20px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .footer-col a {
@@ -612,12 +616,13 @@
   color: #64748b;
   text-decoration: none;
   font-size: 0.9375rem;
-  padding: 8px 0;
+  padding: 6px 0;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .footer-col a:hover {
-  color: #10b981;
+  color: white;
 }
 
 .footer-bottom {
