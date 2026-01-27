@@ -1,5 +1,5 @@
 /* ============================================
-   LANDING PAGE STYLES - Matching Design
+   LANDING PAGE STYLES - Premium Design
    ============================================ */
 
 .landing-page {
@@ -7,7 +7,38 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Navigation */
+/* ========== Custom Pill Icon ========== */
+.pill-icon {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  transform: rotate(-45deg);
+}
+
+.pill-icon.large {
+  width: 40px;
+  height: 40px;
+}
+
+.pill-top, .pill-bottom {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  border-radius: 100px 100px 0 0;
+}
+
+.pill-top {
+  top: 0;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.pill-bottom {
+  bottom: 0;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-radius: 0 0 100px 100px;
+}
+
+/* ========== Navigation ========== */
 .landing-nav {
   position: fixed;
   top: 0;
@@ -16,8 +47,8 @@
   z-index: 100;
   padding: 16px 0;
   background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .landing-container {
@@ -35,16 +66,36 @@
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.nav-pill {
-  font-size: 1.5rem;
+.nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .brand-text {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   font-weight: 700;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.nav-center {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
   color: white;
 }
 
@@ -55,7 +106,7 @@
 
 .nav-btn {
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 0.875rem;
   text-decoration: none;
@@ -78,10 +129,10 @@
 
 .nav-btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
-/* Hero Section */
+/* ========== Hero Section ========== */
 .hero {
   padding: 140px 0 80px;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -278,47 +329,122 @@
   line-height: 1.6;
 }
 
-/* ========== Footer ========== */
+/* ========== Premium Footer ========== */
 .landing-footer {
-  padding: 24px 0;
-  background: #0f172a;
+  padding: 60px 0 0;
+  background: #0a0f1a;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.footer-content {
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr;
+  gap: 60px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.footer-brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.footer-tagline {
+  color: #64748b;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0 0 24px;
+  max-width: 280px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.social-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.footer-col h4 {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin: 0 0 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.footer-col a {
+  display: block;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  padding: 8px 0;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover {
+  color: #10b981;
+}
+
+.footer-bottom {
+  padding: 24px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer-pill {
-  font-size: 1.25rem;
-}
-
-.footer-text {
-  font-size: 1rem;
-  font-weight: 700;
-  color: white;
-}
-
-.footer-copy {
-  color: #64748b;
+.footer-bottom p {
+  color: #475569;
   margin: 0;
   font-size: 0.875rem;
+}
+
+.footer-note {
+  font-size: 0.8125rem !important;
+  color: #334155 !important;
 }
 
 .heart {
   color: #ef4444;
 }
 
-/* Responsive */
+/* ========== Responsive ========== */
 @media (max-width: 900px) {
+  .nav-center {
+    display: none;
+  }
+
   .hero-title {
     font-size: 2.25rem;
   }
@@ -328,9 +454,24 @@
     grid-template-columns: 1fr;
   }
 
-  .footer-content {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-bottom {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-links {
+    grid-template-columns: 1fr;
   }
 }
