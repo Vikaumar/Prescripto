@@ -24,6 +24,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [medicineInfo, setMedicineInfo] = useState(null);
 
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
   const handleUpload = async (file) => {
     setIsLoading(true);
     setError(null);
