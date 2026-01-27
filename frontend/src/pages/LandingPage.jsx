@@ -11,8 +11,18 @@ function LandingPage() {
             <nav className="landing-nav">
                 <div className="landing-container">
                     <div className="nav-brand">
-                        <span className="nav-pill">💊</span>
+                        <div className="nav-logo">
+                            <div className="pill-icon">
+                                <div className="pill-top"></div>
+                                <div className="pill-bottom"></div>
+                            </div>
+                        </div>
                         <span className="brand-text">Prescripto</span>
+                    </div>
+                    <div className="nav-center">
+                        <a href="#features" className="nav-link">Features</a>
+                        <a href="#how-it-works" className="nav-link">How it Works</a>
+                        <a href="#about" className="nav-link">About</a>
                     </div>
                     <div className="nav-links">
                         {isAuthenticated ? (
@@ -134,14 +144,48 @@ function LandingPage() {
             </section>
 
             {/* Footer */}
-            <footer className="landing-footer">
+            <footer className="landing-footer" id="about">
                 <div className="landing-container">
-                    <div className="footer-content">
-                        <div className="footer-brand">
-                            <span className="footer-pill">💊</span>
-                            <span className="footer-text">Prescripto</span>
+                    <div className="footer-main">
+                        <div className="footer-brand-section">
+                            <div className="footer-logo">
+                                <div className="pill-icon large">
+                                    <div className="pill-top"></div>
+                                    <div className="pill-bottom"></div>
+                                </div>
+                                <span className="footer-brand-text">Prescripto</span>
+                            </div>
+                            <p className="footer-tagline">Making prescriptions understandable for everyone. Powered by AI.</p>
+                            <div className="footer-social">
+                                <a href="#" className="social-link">𝕏</a>
+                                <a href="#" className="social-link">in</a>
+                                <a href="#" className="social-link">📧</a>
+                            </div>
                         </div>
-                        <p className="footer-copy">© 2026 Prescripto. Made with <span className="heart">❤️</span> in India.</p>
+                        <div className="footer-links">
+                            <div className="footer-col">
+                                <h4>Product</h4>
+                                <a href="#features">Features</a>
+                                <a href="#how-it-works">How it Works</a>
+                                <a href="#">Pricing</a>
+                            </div>
+                            <div className="footer-col">
+                                <h4>Support</h4>
+                                <a href="#">Help Center</a>
+                                <a href="#">Contact Us</a>
+                                <a href="#">FAQ</a>
+                            </div>
+                            <div className="footer-col">
+                                <h4>Legal</h4>
+                                <a href="#">Privacy Policy</a>
+                                <a href="#">Terms of Service</a>
+                                <a href="#">Disclaimer</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="footer-bottom">
+                        <p>© 2026 Prescripto. Made with <span className="heart">❤️</span> in India.</p>
+                        <p className="footer-note">Not a substitute for professional medical advice.</p>
                     </div>
                 </div>
             </footer>
