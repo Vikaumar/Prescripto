@@ -92,7 +92,7 @@ function LandingPage() {
                     <div className="features-light-grid">
                         <div className="feature-light-card">
                             <div className="feature-light-icon blue">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <circle cx="11" cy="11" r="8" />
                                     <path d="m21 21-4.35-4.35" />
                                 </svg>
@@ -102,7 +102,7 @@ function LandingPage() {
                         </div>
                         <div className="feature-light-card">
                             <div className="feature-light-icon green">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                                     <circle cx="9" cy="7" r="4" />
                                     <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -113,15 +113,15 @@ function LandingPage() {
                             <p>Medical terms simplified for everyone</p>
                         </div>
                         <div className="feature-light-card">
-                            <div className="feature-light-icon yellow">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <div className="feature-light-icon orange">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <circle cx="12" cy="12" r="10" />
                                     <line x1="2" y1="12" x2="22" y2="12" />
                                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                                 </svg>
                             </div>
                             <h3>13+ Languages</h3>
-                            <p>Hindi, Tamil, Telugu, Bengali & more</p>
+                            <p>Hindi, Tamil, Telugu, Bengali &amp; more</p>
                         </div>
                     </div>
                 </div>
@@ -131,13 +131,13 @@ function LandingPage() {
             <section className="how-it-works" id="how-it-works">
                 <div className="landing-container">
                     <div className="section-header">
-                        <h2>How It Works</h2>
+                        <h2 className="gradient-title">How It Works</h2>
                         <p>Three simple steps to understand your prescription</p>
                     </div>
                     <div className="steps-grid">
                         <div className="step-card">
-                            <div className="step-icon blue">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <div className="step-icon green">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                     <polyline points="17,8 12,3 7,8" />
                                     <line x1="12" y1="3" x2="12" y2="15" />
@@ -147,8 +147,8 @@ function LandingPage() {
                             <p>Take a photo or upload an image of your prescription</p>
                         </div>
                         <div className="step-card">
-                            <div className="step-icon green">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <div className="step-icon teal">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <circle cx="11" cy="11" r="8" />
                                     <path d="m21 21-4.35-4.35" />
                                 </svg>
@@ -158,7 +158,7 @@ function LandingPage() {
                         </div>
                         <div className="step-card">
                             <div className="step-icon purple">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                                     <circle cx="9" cy="7" r="4" />
                                 </svg>
@@ -176,43 +176,38 @@ function LandingPage() {
                     <div className="footer-main">
                         <div className="footer-brand-section">
                             <div className="footer-logo">
-                                <div className="pill-icon large">
-                                    <div className="pill-top"></div>
-                                    <div className="pill-bottom"></div>
+                                <div className="footer-heart-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                    </svg>
                                 </div>
                                 <span className="footer-brand-text">Prescripto</span>
                             </div>
-                            <p className="footer-tagline">Making prescriptions understandable for everyone. Powered by AI.</p>
-                            <div className="footer-social">
-                                <a href="#" className="social-link">𝕏</a>
-                                <a href="#" className="social-link">in</a>
-                                <a href="#" className="social-link">📧</a>
-                            </div>
+                            <p className="footer-tagline">Making prescriptions easier to understand for everyone.</p>
                         </div>
                         <div className="footer-links">
                             <div className="footer-col">
-                                <h4>Product</h4>
-                                <a href="#features">Features</a>
-                                <a href="#how-it-works">How it Works</a>
-                                <a href="#">Pricing</a>
+                                <h4>FEATURES</h4>
+                                <a href="#features">Smart OCR</a>
+                                <a href="#features">AI Analysis</a>
+                                <a href="#features">Multi-language</a>
+                                <a href="#features">24/7 Chat Support</a>
                             </div>
                             <div className="footer-col">
-                                <h4>Support</h4>
-                                <a href="#">Help Center</a>
-                                <a href="#">Contact Us</a>
-                                <a href="#">FAQ</a>
-                            </div>
-                            <div className="footer-col">
-                                <h4>Legal</h4>
+                                <h4>RESOURCES</h4>
+                                <a href="#how-it-works">How It Works</a>
                                 <a href="#">Privacy Policy</a>
                                 <a href="#">Terms of Service</a>
-                                <a href="#">Disclaimer</a>
+                                <a href="#">Contact Us</a>
                             </div>
                         </div>
                     </div>
                     <div className="footer-bottom">
-                        <p>© 2026 Prescripto. Made with <span className="heart">❤️</span> in India.</p>
-                        <p className="footer-note">Not a substitute for professional medical advice.</p>
+                        <p>© 2026 Prescripto. All rights reserved.</p>
+                        <p className="footer-disclaimer">
+                            <span className="disclaimer-icon">ⓘ</span>
+                            For educational purposes only. Always consult your doctor for medical advice.
+                        </p>
                     </div>
                 </div>
             </footer>
