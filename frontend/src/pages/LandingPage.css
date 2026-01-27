@@ -320,16 +320,55 @@
 /* ========== Features Light Section ========== */
 .features-light {
   min-height: 100vh;
-  padding: 80px 0;
+  padding: 100px 0;
   background: #e5e5e5;
   display: flex;
   align-items: center;
 }
 
+.features-light .landing-container {
+  width: 100%;
+}
+
+.section-header-light {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-tag {
+  display: inline-block;
+  padding: 8px 20px;
+  background: #dbeafe;
+  color: #3b82f6;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.section-header-light h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+
+.section-header-light p {
+  font-size: 1.125rem;
+  color: #64748b;
+  margin: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .features-light-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 32px;
 }
 
 .feature-light-card {
