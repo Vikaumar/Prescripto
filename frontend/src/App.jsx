@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 import UploadBox from './components/UploadBox';
 import MedicineCard from './components/MedicineCard';
 import LanguageSelector from './components/LanguageSelector';
 import ChatBot from './components/ChatBot';
 import Loader from './components/Loader';
+import { useAuth } from './context/AuthContext';
 import {
   uploadPrescription,
   analyzePrescription,
