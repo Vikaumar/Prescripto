@@ -160,9 +160,22 @@ YOUR TASKS:
 2. For EACH medicine found, use your medical knowledge to provide detailed information
 3. If a word looks like a medicine name, include it even if misspelled
 4. If you cannot find clear medicine names, return empty medicines array
+5. Extract patient, doctor, hospital, and date information
 
 RESPOND WITH ONLY JSON (no markdown):
 {
+  "patientInfo": {
+    "name": "patient name if found or null",
+    "age": "patient age if found or null",
+    "gender": "patient gender if found or null"
+  },
+  "doctorInfo": {
+    "name": "doctor name if found or null",
+    "qualification": "MBBS, MD, etc. if found or null",
+    "specialization": "specialization if found or null",
+    "hospital": "hospital or clinic name if found or null"
+  },
+  "prescriptionDate": "date of prescription if found or null",
   "medicines": [
     {
       "name": "exact medicine name from text",

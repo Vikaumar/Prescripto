@@ -210,6 +210,74 @@ function App() {
                 </div>
               )}
 
+              {/* Prescription Info Card - Patient, Doctor, Hospital, Date */}
+              {(displayData?.patientInfo || displayData?.doctorInfo || displayData?.prescriptionDate) && (
+                <div className="prescription-info-card">
+                  <div className="info-card-header">
+                    <span className="info-card-icon">📋</span>
+                    <h3>Prescription Details</h3>
+                  </div>
+                  <div className="info-card-grid">
+                    {/* Doctor Info */}
+                    {displayData?.doctorInfo?.name && (
+                      <div className="info-item doctor">
+                        <span className="info-icon">👨‍⚕️</span>
+                        <div className="info-content">
+                          <span className="info-label">Doctor</span>
+                          <span className="info-value">{displayData.doctorInfo.name}</span>
+                          {displayData.doctorInfo.qualification && (
+                            <span className="info-sub">{displayData.doctorInfo.qualification}</span>
+                          )}
+                          {displayData.doctorInfo.specialization && (
+                            <span className="info-sub">{displayData.doctorInfo.specialization}</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hospital/Clinic */}
+                    {displayData?.doctorInfo?.hospital && (
+                      <div className="info-item hospital">
+                        <span className="info-icon">🏥</span>
+                        <div className="info-content">
+                          <span className="info-label">Hospital/Clinic</span>
+                          <span className="info-value">{displayData.doctorInfo.hospital}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Patient Info */}
+                    {displayData?.patientInfo?.name && (
+                      <div className="info-item patient">
+                        <span className="info-icon">👤</span>
+                        <div className="info-content">
+                          <span className="info-label">Patient</span>
+                          <span className="info-value">{displayData.patientInfo.name}</span>
+                          {(displayData.patientInfo.age || displayData.patientInfo.gender) && (
+                            <span className="info-sub">
+                              {displayData.patientInfo.age && `${displayData.patientInfo.age}`}
+                              {displayData.patientInfo.age && displayData.patientInfo.gender && ' • '}
+                              {displayData.patientInfo.gender}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Date */}
+                    {displayData?.prescriptionDate && (
+                      <div className="info-item date">
+                        <span className="info-icon">📅</span>
+                        <div className="info-content">
+                          <span className="info-label">Date</span>
+                          <span className="info-value">{displayData.prescriptionDate}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Simplified Explanation */}
               {displayData?.simplifiedExplanation && (
                 <div className="explanation-card">
