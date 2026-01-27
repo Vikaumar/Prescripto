@@ -550,16 +550,15 @@
 }
 
 .footer-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 80px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 100px;
   padding-bottom: 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-brand-section {
-  flex: 0 0 280px;
+  max-width: 300px;
 }
 
 .footer-logo {
@@ -594,31 +593,29 @@
 }
 
 .footer-links {
-  display: flex;
-  gap: 60px;
+  display: contents;
 }
 
 .footer-col {
-  min-width: 140px;
+  display: flex;
+  flex-direction: column;
 }
 
 .footer-col h4 {
   color: #94a3b8;
   font-size: 0.75rem;
   font-weight: 600;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 .footer-col a {
-  display: block;
   color: #64748b;
   text-decoration: none;
   font-size: 0.9375rem;
-  padding: 6px 0;
+  padding: 5px 0;
   transition: color 0.2s;
-  white-space: nowrap;
 }
 
 .footer-col a:hover {
