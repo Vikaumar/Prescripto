@@ -545,20 +545,21 @@
 
 /* ========== Premium Footer ========== */
 .landing-footer {
-  padding: 80px 0 0;
-  background: #0a0f1a;
+  padding: 60px 0 0;
+  background: #0f172a;
 }
 
 .footer-main {
   display: flex;
   justify-content: space-between;
-  gap: 60px;
-  padding-bottom: 48px;
+  align-items: flex-start;
+  gap: 80px;
+  padding-bottom: 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-brand-section {
-  max-width: 320px;
+  flex: 0 0 280px;
 }
 
 .footer-logo {
@@ -569,10 +570,10 @@
 }
 
 .footer-heart-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: #10b981;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -580,7 +581,7 @@
 }
 
 .footer-brand-text {
-  font-size: 1.375rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: white;
 }
@@ -588,37 +589,13 @@
 .footer-tagline {
   color: #64748b;
   font-size: 0.9375rem;
-  line-height: 1.7;
-  margin: 0 0 24px;
-}
-
-.footer-social {
-  display: flex;
-  gap: 12px;
-}
-
-.social-link {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.social-link:hover {
-  background: #10b981;
-  color: white;
-  transform: translateY(-2px);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .footer-links {
   display: flex;
-  gap: 60px;
+  gap: 80px;
 }
 
 .footer-col h4 {
