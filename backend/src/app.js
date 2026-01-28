@@ -5,6 +5,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import medicineRoutes from "./routes/medicineRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get("/health", (req, res) => {
 
 /* -------------------- ROUTES -------------------- */
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/prescription", prescriptionRoutes);
 app.use("/api/medicine", medicineRoutes);
 
