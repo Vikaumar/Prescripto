@@ -113,6 +113,23 @@
   font-weight: 600;
 }
 
+.dashboard-btn {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashboard-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
 .logout-btn {
   padding: 6px 14px;
   background: white;
