@@ -494,24 +494,24 @@ function App() {
       {prescription && <ChatBot prescriptionId={prescription._id} />}
 
       {/* Footer */}
-      <footer className="footer">
+      <footer className="app-footer">
         <div className="container">
-          <div className="footer-grid">
+          <div className="app-footer-grid">
             {/* Brand Column */}
-            <div className="footer-brand">
-              <div className="footer-logo">
-                <div className="footer-logo-mark">
+            <div className="app-footer-brand">
+              <div className="app-footer-logo">
+                <div className="app-footer-logo-mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
                   </svg>
                 </div>
                 <span>Prescripto</span>
               </div>
-              <p className="footer-tagline">Making prescriptions easier to understand for everyone.</p>
+              <p className="app-footer-tagline">Making prescriptions easier to understand for everyone.</p>
             </div>
 
             {/* Quick Links */}
-            <div className="footer-links">
+            <div className="app-footer-links">
               <h4>Features</h4>
               <ul>
                 <li>Smart OCR</li>
@@ -522,7 +522,7 @@ function App() {
             </div>
 
             {/* Resources */}
-            <div className="footer-links">
+            <div className="app-footer-links">
               <h4>Resources</h4>
               <ul>
                 <li>How It Works</li>
@@ -534,9 +534,9 @@ function App() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="footer-bottom">
+          <div className="app-footer-bottom">
             <p>© {new Date().getFullYear()} Prescripto. All rights reserved.</p>
-            <p className="footer-disclaimer">
+            <p className="app-footer-disclaimer">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="16" x2="12" y2="12" />
