@@ -117,6 +117,9 @@ function App() {
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <span className="user-name">{user.name}</span>
+                <button className="dashboard-btn" onClick={() => navigate('/dashboard')}>
+                  Dashboard
+                </button>
                 <button className="logout-btn" onClick={handleLogout}>
                   Logout
                 </button>
