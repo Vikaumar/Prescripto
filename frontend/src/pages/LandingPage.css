@@ -543,13 +543,13 @@
   text-align: center;
 }
 
-/* ========== Premium Footer ========== */
+/* ========== Landing Footer ========== */
 .landing-footer {
   padding: 60px 0 0;
   background: #0f172a;
 }
 
-.footer-main {
+.landing-footer-main {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -558,18 +558,18 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.footer-brand-section {
+.landing-footer-brand {
   max-width: 300px;
 }
 
-.footer-logo {
+.landing-footer-logo {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.footer-heart-icon {
+.landing-footer-icon {
   width: 36px;
   height: 36px;
   background: #10b981;
@@ -580,29 +580,29 @@
   color: white;
 }
 
-.footer-brand-text {
+.landing-footer-brand-text {
   font-size: 1.25rem;
   font-weight: 700;
   color: white;
 }
 
-.footer-tagline {
+.landing-footer-tagline {
   color: #64748b;
   font-size: 0.9375rem;
   line-height: 1.6;
   margin: 0;
 }
 
-.footer-col {
+.landing-footer-col {
   min-width: 140px;
 }
 
-.footer-links {
+.landing-footer-links {
   display: flex;
   gap: 60px;
 }
 
-.footer-col h4 {
+.landing-footer-col h4 {
   color: #94a3b8;
   font-size: 0.75rem;
   font-weight: 600;
@@ -611,7 +611,7 @@
   letter-spacing: 0.1em;
 }
 
-.footer-col a {
+.landing-footer-col a {
   display: block;
   color: #64748b;
   text-decoration: none;
@@ -621,34 +621,29 @@
   white-space: nowrap;
 }
 
-.footer-col a:hover {
+.landing-footer-col a:hover {
   color: white;
 }
 
-.footer-bottom {
+.landing-footer-bottom {
   padding: 24px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.footer-bottom p {
+.landing-footer-bottom p {
   color: #475569;
   margin: 0;
   font-size: 0.875rem;
 }
 
-.footer-disclaimer {
+.landing-footer-disclaimer {
   display: flex;
   align-items: center;
   gap: 8px;
   color: #64748b !important;
   font-size: 0.8125rem !important;
-}
-
-.disclaimer-icon {
-  font-size: 1rem;
-  opacity: 0.7;
 }
 
 /* ========== Responsive ========== */
