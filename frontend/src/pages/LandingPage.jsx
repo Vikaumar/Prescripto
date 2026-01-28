@@ -199,21 +199,19 @@ function LandingPage() {
                             </div>
                             <p className="landing-footer-tagline">Making prescriptions easier to understand for everyone.</p>
                         </div>
-                        <div className="landing-footer-links">
-                            <div className="landing-footer-col">
-                                <h4>FEATURES</h4>
-                                <a href="#features">Smart OCR</a>
-                                <a href="#features">AI Analysis</a>
-                                <a href="#features">Multi-language</a>
-                                <a href="#features">24/7 Chat Support</a>
-                            </div>
-                            <div className="landing-footer-col">
-                                <h4>RESOURCES</h4>
-                                <a href="#how-it-works">How It Works</a>
-                                <a href="#">Privacy Policy</a>
-                                <a href="#">Terms of Service</a>
-                                <a href="#">Contact Us</a>
-                            </div>
+                        <div className="landing-footer-col">
+                            <h4>FEATURES</h4>
+                            <a href="#features">Smart OCR</a>
+                            <a href="#features">AI Analysis</a>
+                            <a href="#features">Multi-language</a>
+                            <a href="#features">24/7 Chat Support</a>
+                        </div>
+                        <div className="landing-footer-col">
+                            <h4>RESOURCES</h4>
+                            <a href="#how-it-works">How It Works</a>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Terms of Service</a>
+                            <a href="#">Contact Us</a>
                         </div>
                     </div>
                     <div className="landing-footer-bottom">
