@@ -13,10 +13,17 @@ export const uploadPrescription = async (req, res, next) => {
     const imagePath = req.file.path;
     const extractedText = await extractTextFromImage(imagePath);
 
-    const prescription = await Prescription.create({
+    // Build prescription data, include userId if user is authenticated
+    const prescriptionData = {
       imagePath,
       extractedText,
-    });
+    };
+    
+    if (req.user) {
+      prescriptionData.userId = req.user._id;
+    }
+
+    const prescription = await Prescription.create(prescriptionData);
 
     res.status(201).json({
       success: true,
