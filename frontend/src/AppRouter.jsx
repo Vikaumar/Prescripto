@@ -3,6 +3,7 @@ import { useAuth } from "./context/AuthContext";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
 import App from "./App";
 import Loader from "./components/Loader";
 
@@ -72,6 +73,14 @@ function AppRouter() {
                 element={
                     <ProtectedRoute>
                         <App />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
                     </ProtectedRoute>
                 }
             />
