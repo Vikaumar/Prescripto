@@ -85,7 +85,11 @@ function ChatBot({ prescriptionId }) {
         <div className="chatbot">
             <div className="chatbot-header">
                 <div className="chatbot-title">
-                    <span className="chatbot-avatar">🤖</span>
+                    <div className="chatbot-avatar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                    </div>
                     <div>
                         <h4>Prescripto Assistant</h4>
                         <span className="chatbot-status">
@@ -94,7 +98,9 @@ function ChatBot({ prescriptionId }) {
                     </div>
                 </div>
                 <button className="chatbot-minimize" onClick={() => setIsMinimized(true)}>
-                    ─
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
                 </button>
             </div>
 
