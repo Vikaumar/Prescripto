@@ -694,12 +694,6 @@
     max-width: 100%;
   }
 
-  .landing-footer-links {
-    grid-column: span 1;
-    flex-wrap: wrap;
-    gap: 32px;
-  }
-
   .landing-footer-bottom {
     flex-direction: column;
     gap: 16px;
