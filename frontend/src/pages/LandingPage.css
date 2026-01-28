@@ -597,8 +597,9 @@
 }
 
 .landing-footer-links {
+  grid-column: span 2;
   display: flex;
-  gap: 60px;
+  gap: 48px;
 }
 
 .landing-footer-col h4 {
@@ -691,7 +692,7 @@
   }
 
   .landing-footer-main {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: 32px;
   }
 
@@ -700,6 +701,7 @@
   }
 
   .landing-footer-links {
+    grid-column: span 1;
     flex-wrap: wrap;
     gap: 32px;
   }
