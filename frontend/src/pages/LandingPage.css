@@ -551,14 +551,14 @@
 
 .landing-footer-main {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
   padding-bottom: 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .landing-footer-brand {
-  max-width: 300px;
+  max-width: 280px;
 }
 
 .landing-footer-logo {
@@ -594,12 +594,6 @@
 
 .landing-footer-col {
   min-width: 140px;
-}
-
-.landing-footer-links {
-  grid-column: span 2;
-  display: flex;
-  gap: 48px;
 }
 
 .landing-footer-col h4 {
