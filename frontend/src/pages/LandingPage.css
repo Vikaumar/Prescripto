@@ -691,27 +691,27 @@
     font-size: 2rem;
   }
 
-  .footer-main {
+  .landing-footer-main {
     flex-direction: column;
     gap: 32px;
   }
 
-  .footer-brand-section {
+  .landing-footer-brand {
     max-width: 100%;
   }
 
-  .footer-links {
+  .landing-footer-links {
     flex-wrap: wrap;
     gap: 32px;
   }
 
-  .footer-bottom {
+  .landing-footer-bottom {
     flex-direction: column;
     gap: 16px;
     text-align: center;
   }
 
-  .footer-disclaimer {
+  .landing-footer-disclaimer {
     justify-content: center;
   }
 }
