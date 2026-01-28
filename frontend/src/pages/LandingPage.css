@@ -550,8 +550,9 @@
 }
 
 .footer-main {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 60px;
   padding-bottom: 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -596,8 +597,12 @@
   min-width: 140px;
 }
 
-
-
+.footer-links {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 60px;
+}
 .footer-col h4 {
   color: #94a3b8;
   font-size: 0.75rem;
