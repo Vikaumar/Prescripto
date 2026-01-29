@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './App.css';
 import UploadBox from './components/UploadBox';
 import MedicineCard from './components/MedicineCard';
@@ -11,7 +11,8 @@ import {
   uploadPrescription,
   analyzePrescription,
   translatePrescription,
-  getMedicineInfo
+  getMedicineInfo,
+  getPrescription
 } from './services/api';
 
 function App() {
@@ -26,6 +27,47 @@ function App() {
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Load prescription from URL if coming from dashboard
+  useEffect(() => {
+    const prescriptionId = searchParams.get('prescription');
+    if (prescriptionId) {
+      loadPrescriptionFromHistory(prescriptionId);
+    }
+  }, [searchParams]);
+
+  const loadPrescriptionFromHistory = async (prescriptionId) => {
+    setIsLoading(true);
+    setError(null);
+    setStep('analyzing');
+
+    try {
+      const result = await getPrescription(prescriptionId);
+      setPrescription(result.data);
+
+      // If already analyzed, show results
+      if (result.data.isAnalyzed) {
+        setAnalysis({
+          simplifiedExplanation: result.data.simplifiedExplanation,
+          diagnosis: result.data.diagnosis,
+          doctorNotes: result.data.doctorNotes
+        });
+        setStep('result');
+      } else {
+        // Analyze if not already done
+        const analysisResult = await analyzePrescription(prescriptionId);
+        setAnalysis(analysisResult.data.analysis);
+        setPrescription(analysisResult.data.prescription);
+        setStep('result');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load prescription');
+      setStep('upload');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
