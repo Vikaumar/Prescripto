@@ -461,6 +461,15 @@
     transition: all 0.2s;
 }
 
+.btn-icon.view {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.btn-icon.view:hover {
+    background: #bfdbfe;
+}
+
 .btn-icon.delete {
     background: #fee2e2;
     color: #dc2626;
