@@ -316,6 +316,9 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     font-size: 0.9375rem;
+    color: #0f172a;
+    background-color: white;
+    caret-color: #10b981;
     transition: all 0.2s;
 }
 
