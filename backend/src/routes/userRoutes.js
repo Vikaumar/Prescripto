@@ -51,7 +51,7 @@ router.put("/profile", async (req, res) => {
     const { name, email, profilePicture } = req.body;
 
     // Validate input - at least one field required
-    if (!name && !email && profilePicture === undefined) {
+    if (!name && !email && (profilePicture === undefined)) {
       return res.status(400).json({
         success: false,
         message: "Please provide at least one field to update"
