@@ -234,26 +234,33 @@ function Dashboard() {
                             <form className="profile-form" onSubmit={handleUpdateProfile}>
                                 <div className="profile-pic-upload">
                                     <div className="profile-pic-preview">
-                                        {editProfilePic || profile?.profilePicture ? (
-                                            <img src={editProfilePic || profile?.profilePicture} alt="Profile" />
+                                        {editProfilePic ? (
+                                            <img src={editProfilePic} alt="New Profile" />
+                                        ) : profile?.profilePicture ? (
+                                            <img src={profile.profilePicture} alt="Profile" />
                                         ) : (
                                             <span>{editName?.charAt(0)?.toUpperCase() || profile?.name?.charAt(0)?.toUpperCase()}</span>
                                         )}
                                     </div>
-                                    <label className="upload-btn">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                            <polyline points="17 8 12 3 7 8" />
-                                            <line x1="12" y1="3" x2="12" y2="15" />
-                                        </svg>
-                                        Upload Photo
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleProfilePicChange}
-                                            style={{ display: 'none' }}
-                                        />
-                                    </label>
+                                    <div className="upload-section">
+                                        <label className="upload-btn">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                <polyline points="17 8 12 3 7 8" />
+                                                <line x1="12" y1="3" x2="12" y2="15" />
+                                            </svg>
+                                            {editProfilePic ? 'Change Photo' : 'Upload Photo'}
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleProfilePicChange}
+                                                style={{ display: 'none' }}
+                                            />
+                                        </label>
+                                        {editProfilePic && (
+                                            <span className="upload-status">✓ New photo selected</span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="form-group">
                                     <label>Name</label>
