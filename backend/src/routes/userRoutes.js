@@ -25,6 +25,7 @@ router.get("/profile", async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        profilePicture: user.profilePicture,
         createdAt: user.createdAt,
         lastLogin: user.lastLogin
       },
@@ -47,10 +48,10 @@ router.get("/profile", async (req, res) => {
 // @access  Private
 router.put("/profile", async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, profilePicture } = req.body;
 
-    // Validate input
-    if (!name && !email) {
+    // Validate input - at least one field required
+    if (!name && !email && profilePicture === undefined) {
       return res.status(400).json({
         success: false,
         message: "Please provide at least one field to update"
@@ -72,6 +73,7 @@ router.put("/profile", async (req, res) => {
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email.toLowerCase();
+    if (profilePicture !== undefined) updateData.profilePicture = profilePicture;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -85,7 +87,8 @@ router.put("/profile", async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        profilePicture: user.profilePicture
       }
     });
   } catch (error) {
