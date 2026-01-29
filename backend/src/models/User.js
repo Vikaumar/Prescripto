@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     minLength: [6, "Password must be at least 6 characters"],
     select: false // Don't include password in queries by default
   },
+  profilePicture: {
+    type: String,
+    default: null
+  },
   prescriptions: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Prescription"

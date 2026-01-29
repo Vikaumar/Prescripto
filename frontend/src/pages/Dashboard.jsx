@@ -19,6 +19,7 @@ function Dashboard() {
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState('');
     const [editEmail, setEditEmail] = useState('');
+    const [editProfilePic, setEditProfilePic] = useState(null);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -63,19 +64,43 @@ function Dashboard() {
         }
     };
 
+    // Convert image to base64 for storage
+    const handleProfilePicChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                setError('Image size must be less than 2MB');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setEditProfilePic(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setSaving(true);
+        setError(null);
 
         try {
             const token = localStorage.getItem('token');
+            const updateData = { name: editName, email: editEmail };
+
+            // Include profile picture if changed
+            if (editProfilePic) {
+                updateData.profilePicture = editProfilePic;
+            }
+
             const res = await fetch(`${API_URL}/user/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ name: editName, email: editEmail })
+                body: JSON.stringify(updateData)
             });
 
             const data = await res.json();
@@ -84,8 +109,14 @@ function Dashboard() {
                 throw new Error(data.message || 'Failed to update profile');
             }
 
-            setProfile(prev => ({ ...prev, name: data.user.name, email: data.user.email }));
+            setProfile(prev => ({
+                ...prev,
+                name: data.user.name,
+                email: data.user.email,
+                profilePicture: data.user.profilePicture || prev.profilePicture
+            }));
             setIsEditing(false);
+            setEditProfilePic(null);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -190,12 +221,36 @@ function Dashboard() {
 
                         {isEditing ? (
                             <form className="profile-form" onSubmit={handleUpdateProfile}>
+                                <div className="profile-pic-upload">
+                                    <div className="profile-pic-preview">
+                                        {editProfilePic || profile?.profilePicture ? (
+                                            <img src={editProfilePic || profile?.profilePicture} alt="Profile" />
+                                        ) : (
+                                            <span>{editName?.charAt(0)?.toUpperCase() || profile?.name?.charAt(0)?.toUpperCase()}</span>
+                                        )}
+                                    </div>
+                                    <label className="upload-btn">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                        </svg>
+                                        Upload Photo
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleProfilePicChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                </div>
                                 <div className="form-group">
                                     <label>Name</label>
                                     <input
                                         type="text"
                                         value={editName}
                                         onChange={(e) => setEditName(e.target.value)}
+                                        placeholder="Enter your name"
                                         required
                                     />
                                 </div>
@@ -205,6 +260,7 @@ function Dashboard() {
                                         type="email"
                                         value={editEmail}
                                         onChange={(e) => setEditEmail(e.target.value)}
+                                        placeholder="Enter your email"
                                         required
                                     />
                                 </div>
@@ -214,8 +270,9 @@ function Dashboard() {
                                     </button>
                                     <button type="button" className="btn-cancel" onClick={() => {
                                         setIsEditing(false);
-                                        setEditName(profile.name);
-                                        setEditEmail(profile.email);
+                                        setEditName(profile?.name || '');
+                                        setEditEmail(profile?.email || '');
+                                        setEditProfilePic(null);
                                     }}>
                                         Cancel
                                     </button>
@@ -224,7 +281,11 @@ function Dashboard() {
                         ) : (
                             <div className="profile-info">
                                 <div className="profile-avatar">
-                                    {profile?.name?.charAt(0).toUpperCase()}
+                                    {profile?.profilePicture ? (
+                                        <img src={profile.profilePicture} alt="Profile" />
+                                    ) : (
+                                        profile?.name?.charAt(0).toUpperCase()
+                                    )}
                                 </div>
                                 <div className="profile-details">
                                     <h3>{profile?.name}</h3>
