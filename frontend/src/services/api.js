@@ -9,8 +9,16 @@ export const uploadPrescription = async (imageFile) => {
   const formData = new FormData();
   formData.append("image", imageFile);
 
+  // Get auth token to link prescription to user
+  const token = localStorage.getItem("token");
+  const headers = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_BASE_URL}/prescription/upload`, {
     method: "POST",
+    headers,
     body: formData,
   });
 
