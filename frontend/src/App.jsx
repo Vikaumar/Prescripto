@@ -24,10 +24,28 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [medicineInfo, setMedicineInfo] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Fetch profile picture when user is available
+  useEffect(() => {
+    if (user) {
+      const token = localStorage.getItem('token');
+      fetch('http://localhost:5000/api/user/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.profile?.profilePicture) {
+            setProfilePicture(data.profile.profilePicture);
+          }
+        })
+        .catch(() => { }); // Silently fail
+    }
+  }, [user]);
 
   // Load prescription from URL if coming from dashboard
   useEffect(() => {
@@ -156,7 +174,11 @@ function App() {
             {user && (
               <div className="user-menu">
                 <div className="user-avatar">
-                  {user.name.charAt(0).toUpperCase()}
+                  {profilePicture ? (
+                    <img src={profilePicture} alt={user.name} />
+                  ) : (
+                    user.name.charAt(0).toUpperCase()
+                  )}
                 </div>
                 <span className="user-name">{user.name}</span>
                 <button className="dashboard-btn" onClick={() => navigate('/dashboard')}>
