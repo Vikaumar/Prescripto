@@ -25,12 +25,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [medicineInfo, setMedicineInfo] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [navigate]);
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -170,88 +164,31 @@ function App() {
       <header className="header">
         <div className="container">
           <div className="header-content">
-            <div className="logo-section">
-              <div className="logo-icon">
+            <div className="logo">
+              <div className="pill-logo">
                 <div className="pill-top"></div>
                 <div className="pill-bottom"></div>
               </div>
               <h1>Prescripto</h1>
             </div>
             <p className="tagline">Understand your prescription in simple words</p>
-
             {user && (
-              <>
-                {/* Desktop Menu */}
-                <div className="user-menu desktop-menu">
-                  <div className="user-avatar">
-                    {profilePicture ? (
-                      <img src={profilePicture} alt={user.name} />
-                    ) : (
-                      user.name.charAt(0).toUpperCase()
-                    )}
-                  </div>
-                  <span className="user-name">{user.name}</span>
-                  <button className="dashboard-btn" onClick={() => navigate('/dashboard')}>
-                    Dashboard
-                  </button>
-                  <button className="logout-btn" onClick={handleLogout}>
-                    Logout
-                  </button>
+              <div className="user-menu">
+                <div className="user-avatar">
+                  {profilePicture ? (
+                    <img src={profilePicture} alt={user.name} />
+                  ) : (
+                    user.name.charAt(0).toUpperCase()
+                  )}
                 </div>
-
-                {/* Mobile Menu Toggle */}
-                <button
-                  className="mobile-menu-toggle"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    {isMobileMenuOpen ? (
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    ) : (
-                      <path d="M3 12h18M3 6h18M3 18h18" />
-                    )}
-                  </svg>
+                <span className="user-name">{user.name}</span>
+                <button className="dashboard-btn" onClick={() => navigate('/dashboard')}>
+                  Dashboard
                 </button>
-
-                {/* Mobile Menu Sidebar */}
-                <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
-                <div className={`mobile-menu-sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
-                  <div className="mobile-menu-header">
-                    <div className="user-profile-summary">
-                      <div className="user-avatar large">
-                        {profilePicture ? (
-                          <img src={profilePicture} alt={user.name} />
-                        ) : (
-                          user.name.charAt(0).toUpperCase()
-                        )}
-                      </div>
-                      <div className="user-info">
-                        <span className="user-name">{user.name}</span>
-                        <span className="user-email">{user.email}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <nav className="mobile-nav">
-                    <button className="mobile-nav-item" onClick={() => navigate('/dashboard')}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="7" height="7" />
-                        <rect x="14" y="3" width="7" height="7" />
-                        <rect x="14" y="14" width="7" height="7" />
-                        <rect x="3" y="14" width="7" height="7" />
-                      </svg>
-                      Dashboard
-                    </button>
-                    <button className="mobile-nav-item logout" onClick={handleLogout}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" y1="12" x2="9" y2="12" />
-                      </svg>
-                      Logout
-                    </button>
-                  </nav>
-                </div>
-              </>
+                <button className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>
