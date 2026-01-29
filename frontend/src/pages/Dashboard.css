@@ -277,6 +277,18 @@
     border-color: #94a3b8;
 }
 
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.upload-status {
+    font-size: 0.8125rem;
+    color: #059669;
+    font-weight: 500;
+}
+
 /* Profile Avatar with Image */
 .profile-avatar {
     width: 72px;
