@@ -68,13 +68,24 @@ function Dashboard() {
     const handleProfilePicChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+            // Validate file size (2MB limit)
+            if (file.size > 2 * 1024 * 1024) {
                 setError('Image size must be less than 2MB');
                 return;
             }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                setError('Please select an image file');
+                return;
+            }
+
             const reader = new FileReader();
-            reader.onloadend = () => {
+            reader.onload = () => {
                 setEditProfilePic(reader.result);
+            };
+            reader.onerror = () => {
+                setError('Failed to read image file');
             };
             reader.readAsDataURL(file);
         }
