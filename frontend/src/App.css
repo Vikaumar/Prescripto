@@ -569,6 +569,31 @@
   flex-wrap: wrap;
 }
 
+.result-actions .btn-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--gray-600);
+}
+
+.result-actions .btn-icon:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-300);
+  color: var(--primary-600);
+  transform: translateY(-1px);
+}
+
+.result-actions .btn-icon svg {
+  flex-shrink: 0;
+}
+
 .result-loading {
   padding: 40px;
   text-align: center;
