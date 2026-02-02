@@ -164,6 +164,175 @@ export const getLanguages = async () => {
   return response.json();
 };
 
+// ============ REMINDER API FUNCTIONS ============
+
+/**
+ * Get auth headers
+ */
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` })
+  };
+};
+
+/**
+ * Get all reminders
+ */
+export const getReminders = async (activeOnly = false) => {
+  const url = `${API_BASE_URL}/reminders${activeOnly ? "?active=true" : ""}`;
+  const response = await fetch(url, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch reminders");
+  }
+
+  return response.json();
+};
+
+/**
+ * Create a new reminder
+ */
+export const createReminder = async (reminderData) => {
+  const response = await fetch(`${API_BASE_URL}/reminders`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(reminderData)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to create reminder");
+  }
+
+  return response.json();
+};
+
+/**
+ * Update a reminder
+ */
+export const updateReminder = async (id, updates) => {
+  const response = await fetch(`${API_BASE_URL}/reminders/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to update reminder");
+  }
+
+  return response.json();
+};
+
+/**
+ * Delete a reminder
+ */
+export const deleteReminder = async (id) => {
+  const response = await fetch(`${API_BASE_URL}/reminders/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to delete reminder");
+  }
+
+  return response.json();
+};
+
+/**
+ * Toggle reminder active/paused state
+ */
+export const toggleReminder = async (id, field) => {
+  const response = await fetch(`${API_BASE_URL}/reminders/${id}/toggle`, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ field })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to toggle reminder");
+  }
+
+  return response.json();
+};
+
+/**
+ * Log a dose (taken, skipped, snoozed)
+ */
+export const logDose = async (reminderId, data) => {
+  const response = await fetch(`${API_BASE_URL}/reminders/${reminderId}/log`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to log dose");
+  }
+
+  return response.json();
+};
+
+/**
+ * Get today's doses
+ */
+export const getTodaysDoses = async () => {
+  const response = await fetch(`${API_BASE_URL}/reminders/today`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch today's doses");
+  }
+
+  return response.json();
+};
+
+/**
+ * Get adherence statistics
+ */
+export const getAdherenceStats = async (period = "week") => {
+  const response = await fetch(`${API_BASE_URL}/reminders/stats?period=${period}`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch adherence stats");
+  }
+
+  return response.json();
+};
+
+/**
+ * Save push subscription
+ */
+export const savePushSubscription = async (subscription) => {
+  const response = await fetch(`${API_BASE_URL}/reminders/subscribe`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ subscription })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to save push subscription");
+  }
+
+  return response.json();
+};
+
 export default {
   uploadPrescription,
   getPrescription,
@@ -173,4 +342,14 @@ export default {
   getMedicineInfo,
   explainTerm,
   getLanguages,
+  // Reminder APIs
+  getReminders,
+  createReminder,
+  updateReminder,
+  deleteReminder,
+  toggleReminder,
+  logDose,
+  getTodaysDoses,
+  getAdherenceStats,
+  savePushSubscription
 };
