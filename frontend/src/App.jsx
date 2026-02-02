@@ -157,6 +157,57 @@ function App() {
     setMedicineInfo(null);
   };
 
+  // Handle PDF export
+  const handleExportPDF = () => {
+    if (!prescription) return;
+    try {
+      const fullPrescription = {
+        ...prescription,
+        ...analysis,
+        medicines: displayMedicines
+      };
+      exportPrescriptionPDF(fullPrescription);
+    } catch (err) {
+      setError('Failed to export PDF. Please try again.');
+    }
+  };
+
+  // Handle share
+  const handleShare = async () => {
+    if (!prescription) return;
+    try {
+      const shared = await sharePrescription({
+        ...prescription,
+        medicines: displayMedicines
+      });
+      if (!shared) {
+        // Fallback: copy link to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      // Fallback: copy link
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      } catch {
+        setError('Unable to share. Please copy the URL manually.');
+      }
+    }
+  };
+
+  // Cache prescription for offline access when results are loaded
+  useEffect(() => {
+    if (prescription && step === 'result') {
+      cacheLocally({
+        ...prescription,
+        ...analysis,
+        medicines: displayMedicines,
+        _cachedAt: new Date().toISOString()
+      }).catch(() => { }); // Silently fail
+    }
+  }, [prescription, step, analysis]);
+
   const displayData = translatedData || analysis;
   const displayMedicines = translatedData?.medicines || analysis?.medicines || prescription?.medicines || [];
 
