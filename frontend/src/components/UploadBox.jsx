@@ -6,6 +6,7 @@ function UploadBox({ onUpload, isLoading = false }) {
     const [preview, setPreview] = useState(null);
     const [fileName, setFileName] = useState('');
     const fileInputRef = useRef(null);
+    const cameraInputRef = useRef(null);
 
     const handleDragOver = (e) => {
         e.preventDefault();
@@ -50,9 +51,17 @@ function UploadBox({ onUpload, isLoading = false }) {
         }
     };
 
-    const handleClick = () => {
+    const handleBrowseClick = (e) => {
+        e.stopPropagation();
         if (!isLoading) {
             fileInputRef.current?.click();
+        }
+    };
+
+    const handleCameraClick = (e) => {
+        e.stopPropagation();
+        if (!isLoading) {
+            cameraInputRef.current?.click();
         }
     };
 
@@ -63,6 +72,9 @@ function UploadBox({ onUpload, isLoading = false }) {
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
+        if (cameraInputRef.current) {
+            cameraInputRef.current.value = '';
+        }
     };
 
     return (
@@ -71,12 +83,23 @@ function UploadBox({ onUpload, isLoading = false }) {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            onClick={handleClick}
         >
+            {/* File Upload Input */}
             <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
+                onChange={handleFileInput}
+                className="upload-input"
+                disabled={isLoading}
+            />
+
+            {/* Camera Capture Input - Uses back camera on mobile */}
+            <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
                 onChange={handleFileInput}
                 className="upload-input"
                 disabled={isLoading}
@@ -105,8 +128,26 @@ function UploadBox({ onUpload, isLoading = false }) {
                     </div>
                     <h3 className="upload-title">Upload Prescription</h3>
                     <p className="upload-subtitle">
-                        Drag & drop your prescription image here, or <span className="upload-link">browse</span>
+                        Drag & drop your prescription image here
                     </p>
+
+                    {/* Action Buttons */}
+                    <div className="upload-actions">
+                        <button className="upload-btn browse" onClick={handleBrowseClick} disabled={isLoading}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                            </svg>
+                            Browse Files
+                        </button>
+                        <button className="upload-btn camera" onClick={handleCameraClick} disabled={isLoading}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                <circle cx="12" cy="13" r="4" />
+                            </svg>
+                            Take Photo
+                        </button>
+                    </div>
+
                     <p className="upload-hint">
                         Supports JPG, JPEG, PNG (max 5MB)
                     </p>
