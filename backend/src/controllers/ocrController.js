@@ -1,4 +1,6 @@
+import fs from 'fs';
 import extractTextFromImage from "../services/ocrService.js";
+import { uploadToCloudinary, deleteFromCloudinary } from "../services/cloudinaryService.js";
 import Prescription from "../models/Prescription.js";
 
 export const uploadPrescription = async (req, res, next) => {
@@ -10,12 +12,25 @@ export const uploadPrescription = async (req, res, next) => {
       });
     }
 
-    const imagePath = req.file.path;
-    const extractedText = await extractTextFromImage(imagePath);
+    const localPath = req.file.path;
+    
+    // Step 1: Extract text from the local image (OCR needs file path)
+    const extractedText = await extractTextFromImage(localPath);
 
-    // Build prescription data, include userId if user is authenticated
+    // Step 2: Upload image to Cloudinary
+    let cloudinaryResult;
+    try {
+      cloudinaryResult = await uploadToCloudinary(localPath, 'prescriptions');
+    } catch (cloudError) {
+      console.error('Cloudinary upload failed:', cloudError);
+      // Continue with local path if Cloudinary fails
+      cloudinaryResult = null;
+    }
+
+    // Step 3: Build prescription data
     const prescriptionData = {
-      imagePath,
+      imagePath: cloudinaryResult ? cloudinaryResult.url : localPath,
+      imagePublicId: cloudinaryResult ? cloudinaryResult.publicId : null,
       extractedText,
     };
     
@@ -23,7 +38,15 @@ export const uploadPrescription = async (req, res, next) => {
       prescriptionData.userId = req.user._id;
     }
 
+    // Step 4: Save to database
     const prescription = await Prescription.create(prescriptionData);
+
+    // Step 5: Clean up local file after successful Cloudinary upload
+    if (cloudinaryResult && fs.existsSync(localPath)) {
+      fs.unlink(localPath, (err) => {
+        if (err) console.error('Failed to delete local file:', err);
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -81,3 +104,40 @@ export const getAllPrescriptions = async (req, res, next) => {
   }
 };
 
+/**
+ * Delete prescription by ID
+ * DELETE /api/prescription/:id
+ */
+export const deletePrescription = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const prescription = await Prescription.findById(id);
+    
+    if (!prescription) {
+      return res.status(404).json({
+        success: false,
+        message: "Prescription not found",
+      });
+    }
+
+    // Delete image from Cloudinary if it exists
+    if (prescription.imagePublicId) {
+      try {
+        await deleteFromCloudinary(prescription.imagePublicId);
+      } catch (cloudError) {
+        console.error('Failed to delete from Cloudinary:', cloudError);
+      }
+    }
+
+    // Delete prescription from database
+    await Prescription.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Prescription deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
