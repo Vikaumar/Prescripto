@@ -1,0 +1,499 @@
+/* ============================================
+   REMINDERS PAGE - Premium Styles
+   ============================================ */
+
+.reminders-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f8fafc 100%);
+}
+
+.reminders-page.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== HEADER ========== */
+.reminders-header {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.reminders-header .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.reminders-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* ========== STATS SUMMARY ========== */
+.stats-summary {
+  padding: 24px 0;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+/* ========== TABS ========== */
+.tabs-container {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0;
+  position: sticky;
+  top: 65px;
+  z-index: 99;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 16px 24px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #1e293b;
+  background: #f8fafc;
+}
+
+.tab.active {
+  color: #6366f1;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 3px 3px 0 0;
+}
+
+/* ========== MAIN CONTENT ========== */
+.reminders-main {
+  padding: 32px 0 100px;
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  color: #64748b;
+  margin: 0 0 24px 0;
+}
+
+/* ========== TIMELINE ========== */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 80px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+}
+
+.timeline-time {
+  width: 60px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-align: right;
+  padding-top: 16px;
+  flex-shrink: 0;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  flex-shrink: 0;
+  margin-top: 16px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 4px white;
+}
+
+.timeline-content {
+  flex: 1;
+  padding: 8px 0 24px 0;
+}
+
+.dose-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.dose-card:hover {
+  border-color: #6366f1;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.1);
+}
+
+.timeline-item.taken .dose-card {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.timeline-item.skipped .dose-card {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.timeline-item.missed .dose-card {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.dose-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dose-dosage {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.dose-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.dose-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.dose-btn.take {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.dose-btn.take:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.dose-btn.skip {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.dose-btn.skip:hover {
+  background: #e2e8f0;
+}
+
+.dose-status {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.dose-status.taken {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.dose-status.skipped {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.dose-status.missed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ========== REMINDERS GRID ========== */
+.reminders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ========== ALERT ========== */
+.reminders-page .alert {
+  max-width: 800px;
+  margin: 16px auto;
+}
+
+.alert-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+}
+
+.alert-error p {
+  flex: 1;
+  margin: 0;
+  font-weight: 500;
+}
+
+.alert-error button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .reminders-header .header-content {
+    flex-wrap: wrap;
+  }
+
+  .reminders-header h1 {
+    flex: 1;
+    order: 1;
+    text-align: center;
+  }
+
+  .back-btn {
+    order: 0;
+  }
+
+  .header-actions {
+    order: 2;
+  }
+
+  .add-btn span {
+    display: none;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .timeline::before {
+    left: 12px;
+  }
+
+  .timeline-item {
+    gap: 12px;
+  }
+
+  .timeline-time {
+    width: auto;
+    position: absolute;
+    right: 0;
+    top: 14px;
+    padding: 4px 8px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    font-size: 0.75rem;
+  }
+
+  .timeline-dot {
+    margin-left: 4px;
+  }
+
+  .timeline-content {
+    margin-left: 24px;
+    padding-right: 70px;
+  }
+
+  .dose-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dose-actions {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .dose-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .reminders-grid {
+    grid-template-columns: 1fr;
+  }
+}
