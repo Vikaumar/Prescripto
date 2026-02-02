@@ -6,6 +6,7 @@ import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import medicineRoutes from "./routes/medicineRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import reminderRoutes from "./routes/reminderRoutes.js";
 
 const app = express();
 
