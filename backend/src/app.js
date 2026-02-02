@@ -11,14 +11,23 @@ const app = express();
 
 /* -------------------- MIDDLEWARES -------------------- */
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://172.22.31.69:5173",
-    "http://192.168.137.1:5173",
-    "http://172.22.55.230:5173",
-    "http://192.168.1.121:5173"
-  ],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost variations
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    // Allow any 192.168.x.x or 172.x.x.x (local network IPs)
+    if (origin.match(/^http:\/\/(192\.168\.|172\.\d+\.)/)) {
+      return callback(null, true);
+    }
+    
+    // Default: allow for development
+    callback(null, true);
+  },
   credentials: true
 }));
 app.use(express.json());
