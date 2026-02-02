@@ -48,6 +48,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/prescription", prescriptionRoutes);
 app.use("/api/medicine", medicineRoutes);
+app.use("/api/reminders", reminderRoutes);
 
 /* ❗ Error middleware ALWAYS LAST */
 app.use(errorHandler);
