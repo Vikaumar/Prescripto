@@ -158,8 +158,70 @@ function App() {
   const displayData = translatedData || analysis;
   const displayMedicines = translatedData?.medicines || analysis?.medicines || prescription?.medicines || [];
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className="app">
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* Mobile Sidebar */}
+      <div className={`mobile-sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="logo">
+            <div className="pill-logo">
+              <div className="pill-top"></div>
+              <div className="pill-bottom"></div>
+            </div>
+            <h1>Prescripto</h1>
+          </div>
+          <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        {user && (
+          <div className="sidebar-content">
+            <div className="sidebar-user">
+              <div className="user-avatar large">
+                {profilePicture ? (
+                  <img src={profilePicture} alt={user.name} />
+                ) : (
+                  user.name.charAt(0).toUpperCase()
+                )}
+              </div>
+              <div className="sidebar-user-info">
+                <span className="user-name">{user.name}</span>
+                <span className="user-email">{user.email}</span>
+              </div>
+            </div>
+            <nav className="sidebar-nav">
+              <button onClick={() => { navigate('/dashboard'); setSidebarOpen(false); }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                Dashboard
+              </button>
+              <button onClick={() => { handleLogout(); setSidebarOpen(false); }} className="logout">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Logout
+              </button>
+            </nav>
+          </div>
+        )}
+      </div>
+
       {/* Header */}
       <header className="header">
         <div className="container">
@@ -172,8 +234,10 @@ function App() {
               <h1>Prescripto</h1>
             </div>
             <p className="tagline">Understand your prescription in simple words</p>
+
+            {/* Desktop User Menu */}
             {user && (
-              <div className="user-menu">
+              <div className="user-menu desktop-only">
                 <div className="user-avatar">
                   {profilePicture ? (
                     <img src={profilePicture} alt={user.name} />
@@ -189,6 +253,17 @@ function App() {
                   Logout
                 </button>
               </div>
+            )}
+
+            {/* Mobile Hamburger Menu */}
+            {user && (
+              <button className="hamburger-btn mobile-only" onClick={() => setSidebarOpen(true)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              </button>
             )}
           </div>
         </div>
