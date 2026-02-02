@@ -15,6 +15,8 @@ import {
   getMedicineInfo,
   getPrescription
 } from './services/api';
+import { exportPrescriptionPDF, sharePrescription } from './utils/pdfExport';
+import { savePrescription as cacheLocally } from './services/offlineStorage';
 
 function App() {
   const [step, setStep] = useState('upload'); // upload, analyzing, result
