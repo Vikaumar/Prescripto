@@ -45,6 +45,9 @@ const prescriptionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    imagePublicId: {
+      type: String, // Cloudinary public ID for deletion
+    },
     extractedText: {
       type: String,
       required: true,
