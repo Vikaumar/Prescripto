@@ -7,6 +7,7 @@ import LanguageSelector from './components/LanguageSelector';
 import ChatBot from './components/ChatBot';
 import Loader from './components/Loader';
 import { useAuth } from './context/AuthContext';
+import { API_URL } from './config/api';
 import {
   uploadPrescription,
   analyzePrescription,
@@ -34,8 +35,7 @@ function App() {
   useEffect(() => {
     if (user) {
       const token = localStorage.getItem('token');
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      fetch(`${apiUrl}/user/profile`, {
+      fetch(`${API_URL}/user/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())
