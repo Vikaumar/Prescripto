@@ -149,6 +149,56 @@
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 100px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-btn.browse {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.upload-btn.browse:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.upload-btn.camera {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.upload-btn.camera:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.upload-hint {
+  font-size: 0.8125rem;
+  color: var(--gray-400);
+  margin-top: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Formats hint */
