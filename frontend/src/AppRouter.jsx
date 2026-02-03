@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import RemindersPage from "./pages/RemindersPage";
 import App from "./App";
 import Loader from "./components/Loader";
 
@@ -84,6 +85,14 @@ function AppRouter() {
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/reminders"
+                element={
+                    <ProtectedRoute>
+                        <RemindersPage />
+                    </ProtectedRoute>
+                }
+            />
 
             {/* Fallback - redirect to landing */}
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -92,3 +101,4 @@ function AppRouter() {
 }
 
 export default AppRouter;
+

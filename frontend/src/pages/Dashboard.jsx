@@ -348,6 +348,23 @@ function Dashboard() {
                                     <span className="stat-label">Last Upload</span>
                                 </div>
                             </div>
+                            <div className="stat-card clickable" onClick={() => navigate('/reminders')}>
+                                <div className="stat-icon reminders">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                </div>
+                                <div className="stat-content">
+                                    <span className="stat-value">💊</span>
+                                    <span className="stat-label">Medicine Reminders</span>
+                                </div>
+                                <div className="stat-arrow">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </section>
 
