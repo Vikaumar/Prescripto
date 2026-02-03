@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAuth } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
 import {
   createReminder,
   getReminders,
@@ -16,7 +16,7 @@ import {
 const router = express.Router();
 
 // All routes require authentication
-router.use(requireAuth);
+router.use(protect);
 
 // Reminder CRUD routes
 router.post("/", createReminder);                    // Create reminder
