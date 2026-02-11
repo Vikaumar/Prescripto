@@ -79,8 +79,8 @@ function InstallPrompt() {
 
     return (
         <>
-            {/* Floating Install Button - Always visible when installable */}
-            {showFloatingBtn && installPrompt && (
+            {/* Floating Install Button - Only when popup is NOT showing */}
+            {showFloatingBtn && installPrompt && !showPrompt && (
                 <button
                     className="install-floating-btn"
                     onClick={handleInstall}
