@@ -18,12 +18,37 @@ import {
 import { exportPrescriptionPDF, sharePrescription } from './utils/pdfExport';
 import { savePrescription as cacheLocally } from './services/offlineStorage';
 
+const SESSION_KEY = 'prescripto_session';
+
+// Helpers to persist/restore state via sessionStorage
+function saveSession(data) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  } catch { /* quota exceeded or private mode */ }
+}
+
+function loadSession() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearSession() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch { }
+}
+
 function App() {
-  const [step, setStep] = useState('upload'); // upload, analyzing, result
-  const [prescription, setPrescription] = useState(null);
-  const [analysis, setAnalysis] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const [translatedData, setTranslatedData] = useState(null);
+  // Restore persisted state on mount
+  const saved = loadSession();
+
+  const [step, setStep] = useState(saved?.step || 'upload');
+  const [prescription, setPrescription] = useState(saved?.prescription || null);
+  const [analysis, setAnalysis] = useState(saved?.analysis || null);
+  const [selectedLanguage, setSelectedLanguage] = useState(saved?.selectedLanguage || 'en');
+  const [translatedData, setTranslatedData] = useState(saved?.translatedData || null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [medicineInfo, setMedicineInfo] = useState(null);
@@ -32,6 +57,52 @@ function App() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Persist state to sessionStorage whenever key data changes
+  useEffect(() => {
+    if (step === 'upload' && !prescription) {
+      clearSession();
+    } else {
+      saveSession({ step, prescription, analysis, selectedLanguage, translatedData });
+    }
+  }, [step, prescription, analysis, selectedLanguage, translatedData]);
+
+  // If we refreshed during 'analyzing', re-trigger analysis from backend
+  useEffect(() => {
+    if (saved?.step === 'analyzing' && saved?.prescription?._id) {
+      resumeAnalysis(saved.prescription._id);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const resumeAnalysis = async (prescriptionId) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // First check if it was already analyzed on the backend
+      const result = await getPrescription(prescriptionId);
+      if (result.data.isAnalyzed) {
+        setPrescription(result.data);
+        setAnalysis({
+          simplifiedExplanation: result.data.simplifiedExplanation,
+          diagnosis: result.data.diagnosis,
+          doctorNotes: result.data.doctorNotes
+        });
+        setStep('result');
+      } else {
+        // Re-trigger analysis
+        const analysisResult = await analyzePrescription(prescriptionId);
+        setAnalysis(analysisResult.data.analysis);
+        setPrescription(analysisResult.data.prescription);
+        setStep('result');
+      }
+    } catch (err) {
+      setError('Analysis was interrupted. Please upload again.');
+      setStep('upload');
+      clearSession();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Fetch profile picture when user is available
   useEffect(() => {
@@ -155,6 +226,7 @@ function App() {
     setSelectedLanguage('en');
     setError(null);
     setMedicineInfo(null);
+    clearSession();
   };
 
   // Handle PDF export
