@@ -155,25 +155,24 @@
 /* Floating Install Button - Permanent */
 .install-floating-btn {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;
+  right: 20px;
   z-index: 9997;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
   border: none;
-  border-radius: 50px;
-  padding: 14px 24px;
-  font-size: 15px;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4),
-              0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   transition: all 0.3s ease;
   font-family: 'Inter', sans-serif;
-  animation: bounceIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .install-floating-btn:hover {
