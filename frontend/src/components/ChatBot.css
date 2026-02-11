@@ -5,8 +5,8 @@
 /* Floating Action Button - Clean Design */
 .chatbot-fab {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  bottom: 90px;
+  right: 24px;
   display: flex;
   align-items: center;
   gap: 10px;
