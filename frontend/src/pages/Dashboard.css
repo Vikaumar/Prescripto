@@ -385,14 +385,14 @@
 /* Stats Section */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
 .stat-card {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     padding: 20px;
     background: #f8fafc;
     border-radius: 12px;
@@ -634,3 +634,14 @@
         justify-content: flex-end;
     }
 }
+
+@media (min-width: 769px) and (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card.clickable {
+        grid-column: span 2;
+    }
+}
+
