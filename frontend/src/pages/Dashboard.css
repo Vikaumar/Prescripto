@@ -157,15 +157,6 @@
     margin-bottom: 20px;
 }
 
-.profile-section .section-header {
-    justify-content: flex-start;
-    gap: 12px;
-}
-
-.profile-section .section-header h2 {
-    margin-right: auto;
-}
-
 .section-header h2 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -402,23 +393,22 @@
 
 .stat-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 20px 18px;
+    text-align: center;
+    gap: 12px;
+    padding: 24px 16px;
     background: #f8fafc;
     border-radius: 12px;
-    min-width: 0;
 }
 
 .stat-icon {
     width: 48px;
     height: 48px;
-    min-width: 48px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
 
 .stat-icon.prescriptions {
@@ -439,27 +429,20 @@
 .stat-content {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-width: 0;
+    align-items: center;
+    gap: 4px;
 }
 
 .stat-value {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #0f172a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .stat-label {
     font-size: 0.8125rem;
     font-weight: 500;
     color: #64748b;
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .stat-card.clickable {
