@@ -216,85 +216,77 @@ function Dashboard() {
                 <div className="dashboard-content">
                     {/* Profile Section */}
                     <section className="dashboard-section profile-section">
-                        <div className="section-header">
-                            <h2>Profile</h2>
-                            {!isEditing && (
-                                <button className="btn-edit" onClick={() => setIsEditing(true)}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                    </svg>
-                                    Edit
-                                </button>
-                            )}
-                        </div>
-
                         {isEditing ? (
-                            <form className="profile-form" onSubmit={handleUpdateProfile}>
-                                <div className="profile-pic-upload">
-                                    <div className="profile-pic-preview">
-                                        {editProfilePic ? (
-                                            <img src={editProfilePic} alt="New Profile" />
-                                        ) : profile?.profilePicture ? (
-                                            <img src={profile.profilePicture} alt="Profile" />
-                                        ) : (
-                                            <span>{editName?.charAt(0)?.toUpperCase() || profile?.name?.charAt(0)?.toUpperCase()}</span>
-                                        )}
+                            <>
+                                <div className="section-header">
+                                    <h2>Edit Profile</h2>
+                                </div>
+                                <form className="profile-form" onSubmit={handleUpdateProfile}>
+                                    <div className="profile-pic-upload">
+                                        <div className="profile-pic-preview">
+                                            {editProfilePic ? (
+                                                <img src={editProfilePic} alt="New Profile" />
+                                            ) : profile?.profilePicture ? (
+                                                <img src={profile.profilePicture} alt="Profile" />
+                                            ) : (
+                                                <span>{editName?.charAt(0)?.toUpperCase() || profile?.name?.charAt(0)?.toUpperCase()}</span>
+                                            )}
+                                        </div>
+                                        <div className="upload-section">
+                                            <label className="upload-btn">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                    <polyline points="17 8 12 3 7 8" />
+                                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                                </svg>
+                                                {editProfilePic ? 'Change Photo' : 'Upload Photo'}
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleProfilePicChange}
+                                                    style={{ display: 'none' }}
+                                                />
+                                            </label>
+                                            {editProfilePic && (
+                                                <span className="upload-status">✓ New photo selected</span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="upload-section">
-                                        <label className="upload-btn">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                <polyline points="17 8 12 3 7 8" />
-                                                <line x1="12" y1="3" x2="12" y2="15" />
-                                            </svg>
-                                            {editProfilePic ? 'Change Photo' : 'Upload Photo'}
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleProfilePicChange}
-                                                style={{ display: 'none' }}
-                                            />
-                                        </label>
-                                        {editProfilePic && (
-                                            <span className="upload-status">✓ New photo selected</span>
-                                        )}
+                                    <div className="form-group">
+                                        <label>Name</label>
+                                        <input
+                                            type="text"
+                                            value={editName}
+                                            onChange={(e) => setEditName(e.target.value)}
+                                            placeholder="Enter your name"
+                                            required
+                                        />
                                     </div>
-                                </div>
-                                <div className="form-group">
-                                    <label>Name</label>
-                                    <input
-                                        type="text"
-                                        value={editName}
-                                        onChange={(e) => setEditName(e.target.value)}
-                                        placeholder="Enter your name"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Email</label>
-                                    <input
-                                        type="email"
-                                        value={editEmail}
-                                        onChange={(e) => setEditEmail(e.target.value)}
-                                        placeholder="Enter your email"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-actions">
-                                    <button type="submit" className="btn-primary" disabled={saving}>
-                                        {saving ? 'Saving...' : 'Save Changes'}
-                                    </button>
-                                    <button type="button" className="btn-cancel" onClick={() => {
-                                        setIsEditing(false);
-                                        setEditName(profile?.name || '');
-                                        setEditEmail(profile?.email || '');
-                                        setEditProfilePic(null);
-                                    }}>
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
+                                    <div className="form-group">
+                                        <label>Email</label>
+                                        <input
+                                            type="email"
+                                            value={editEmail}
+                                            onChange={(e) => setEditEmail(e.target.value)}
+                                            placeholder="Enter your email"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-actions">
+                                        <button type="submit" className="btn-primary" disabled={saving}>
+                                            {saving ? 'Saving...' : 'Save Changes'}
+                                        </button>
+                                        <button type="button" className="btn-cancel" onClick={() => {
+                                            setIsEditing(false);
+                                            setEditName(profile?.name || '');
+                                            setEditEmail(profile?.email || '');
+                                            setEditProfilePic(null);
+                                        }}>
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </>
                         ) : (
                             <div className="profile-info">
                                 <div className="profile-avatar">
@@ -311,6 +303,13 @@ function Dashboard() {
                                         Member since {formatDate(profile?.createdAt)}
                                     </span>
                                 </div>
+                                <button className="btn-edit" onClick={() => setIsEditing(true)}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    </svg>
+                                    Edit
+                                </button>
                             </div>
                         )}
                     </section>
