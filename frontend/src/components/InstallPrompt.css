@@ -195,17 +195,14 @@
   white-space: nowrap;
 }
 
-@keyframes bounceIn {
-  0% {
-    transform: scale(0) translateY(100px);
+@keyframes fadeIn {
+  from {
     opacity: 0;
+    transform: translateY(10px);
   }
-  60% {
-    transform: scale(1.1) translateY(-10px);
-  }
-  100% {
-    transform: scale(1) translateY(0);
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
