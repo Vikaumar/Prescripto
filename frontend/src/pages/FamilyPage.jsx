@@ -6,11 +6,13 @@ import {
     addFamilyMember,
     updateFamilyMember,
     removeFamilyMember,
+    inviteCaretaker,
     getEmergencyInfo
 } from '../services/api';
 import MemberProfileCard from '../components/MemberProfileCard';
 import EmergencyCard from '../components/EmergencyCard';
 import AddFamilyMemberModal from '../components/AddFamilyMemberModal';
+import InviteCaretakerModal from '../components/InviteCaretakerModal';
 import Loader from '../components/Loader';
 import './FamilyPage.css';
 
@@ -22,6 +24,7 @@ export default function FamilyPage() {
     const [showModal, setShowModal] = useState(false);
     const [editMember, setEditMember] = useState(null);
     const [showEmergency, setShowEmergency] = useState(true);
+    const [showInvite, setShowInvite] = useState(false);
 
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -67,6 +70,11 @@ export default function FamilyPage() {
         }
     };
 
+    const handleInvite = async (data) => {
+        await inviteCaretaker(data);
+        await fetchMembers();
+    };
+
     const handleEdit = (member) => {
         setEditMember(member);
         setShowModal(true);
@@ -94,12 +102,17 @@ export default function FamilyPage() {
                         </p>
                     </div>
                 </div>
-                <button className="add-member-btn" onClick={() => setShowModal(true)}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Add Member
-                </button>
+                <div className="family-header-actions">
+                    <button className="invite-btn" onClick={() => setShowInvite(true)}>
+                        🤝 Invite Caretaker
+                    </button>
+                    <button className="add-member-btn" onClick={() => setShowModal(true)}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Add Member
+                    </button>
+                </div>
             </div>
 
             {/* Error */}
@@ -166,6 +179,13 @@ export default function FamilyPage() {
                 onClose={handleCloseModal}
                 onSubmit={editMember ? handleUpdateMember : handleAddMember}
                 editMember={editMember}
+            />
+
+            {/* Invite Caretaker Modal */}
+            <InviteCaretakerModal
+                isOpen={showInvite}
+                onClose={() => setShowInvite(false)}
+                onInvite={handleInvite}
             />
         </div>
     );
