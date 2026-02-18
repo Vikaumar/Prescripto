@@ -1,0 +1,147 @@
+/* ============================================
+   EMERGENCY CARD - Quick Access Panel
+   ============================================ */
+
+.emergency-panel {
+  background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.emergency-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.emergency-icon {
+  font-size: 1.25rem;
+}
+
+.emergency-panel-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #991b1b;
+  margin: 0;
+}
+
+.emergency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.emergency-item {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #fecaca;
+}
+
+.emergency-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #fef2f2;
+}
+
+.emergency-member-name {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #0f172a;
+}
+
+.emergency-member-rel {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.emergency-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emergency-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emergency-detail.blood {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.detail-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.blood-value {
+  background: #dc2626;
+  color: white;
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+}
+
+.phone-link {
+  color: #16a34a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.phone-link:hover {
+  text-decoration: underline;
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.allergy-tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.condition-tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+@media (max-width: 480px) {
+  .emergency-grid {
+    grid-template-columns: 1fr;
+  }
+}
