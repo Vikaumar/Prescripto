@@ -1,0 +1,241 @@
+/* ============================================
+   MEMBER PROFILE CARD
+   ============================================ */
+
+.member-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.member-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+}
+
+.member-card.pending {
+  opacity: 0.75;
+  border-style: dashed;
+}
+
+/* Header */
+.member-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.member-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-avatar-icon {
+  font-size: 1.5rem;
+}
+
+.member-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.member-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-relationship {
+  font-size: 0.8125rem;
+  color: #64748b;
+  display: block;
+}
+
+.member-age {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  display: block;
+}
+
+.member-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.role-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.role-badge.caretaker {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+}
+
+.role-badge.member {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.status-badge.pending {
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+}
+
+/* Quick Info Tags */
+.member-quick-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.quick-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quick-tag.blood {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.quick-tag.emergency {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.quick-tag.phone {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Health Tags */
+.member-health-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.health-tag {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.health-tag.allergy {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.health-tag.condition {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+/* Notes */
+.member-notes {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 0 0 12px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Actions */
+.member-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.member-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.member-action-btn.edit {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.member-action-btn.edit:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.member-action-btn.remove {
+  background: #fef2f2;
+  color: #dc2626;
+  margin-left: auto;
+}
+
+.member-action-btn.remove:hover {
+  background: #fee2e2;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .member-card-header {
+    flex-wrap: wrap;
+  }
+
+  .member-badges {
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .member-actions {
+    flex-wrap: wrap;
+  }
+}
