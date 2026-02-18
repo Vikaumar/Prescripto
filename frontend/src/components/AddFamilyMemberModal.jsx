@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './AddMemberModal.css';
+import './AddFamilyMemberModal.css';
 
 const RELATIONSHIPS = [
     "Mother", "Father", "Spouse", "Son", "Daughter",
