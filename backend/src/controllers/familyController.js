@@ -1,5 +1,6 @@
 import FamilyMember from "../models/FamilyMember.js";
 import User from "../models/User.js";
+import { sendCaretakerInvite } from "../services/emailService.js";
 
 // @desc    Add a new family member
 // @route   POST /api/family
@@ -224,6 +225,13 @@ export const inviteCaretaker = async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
       $push: { familyMembers: member._id }
     });
+
+    // Send invitation email (fire-and-forget)
+    sendCaretakerInvite(email.toLowerCase(), req.user.name, "caretaker")
+      .then(result => {
+        if (!result.success) console.warn("Email not sent:", result.error);
+      })
+      .catch(err => console.warn("Email error:", err.message));
 
     res.status(201).json({
       success: true,
