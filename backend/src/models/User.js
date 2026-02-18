@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Prescription"
   }],
+  familyMembers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "FamilyMember"
+  }],
   createdAt: {
     type: Date,
     default: Date.now
