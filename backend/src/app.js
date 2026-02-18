@@ -7,6 +7,7 @@ import medicineRoutes from "./routes/medicineRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import reminderRoutes from "./routes/reminderRoutes.js";
+import familyRoutes from "./routes/familyRoutes.js";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/prescription", prescriptionRoutes);
 app.use("/api/medicine", medicineRoutes);
 app.use("/api/reminders", reminderRoutes);
+app.use("/api/family", familyRoutes);
 
 /* ❗ Error middleware ALWAYS LAST */
 app.use(errorHandler);
