@@ -333,6 +333,112 @@ export const savePushSubscription = async (subscription) => {
   return response.json();
 };
 
+// ============ FAMILY API FUNCTIONS ============
+
+/**
+ * Get all family members
+ */
+export const getFamilyMembers = async (status = "") => {
+  const url = `${API_BASE_URL}/family${status ? `?status=${status}` : ""}`;
+  const response = await fetch(url, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch family members");
+  }
+
+  return response.json();
+};
+
+/**
+ * Add a new family member
+ */
+export const addFamilyMember = async (memberData) => {
+  const response = await fetch(`${API_BASE_URL}/family`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(memberData)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to add family member");
+  }
+
+  return response.json();
+};
+
+/**
+ * Update a family member
+ */
+export const updateFamilyMember = async (id, updates) => {
+  const response = await fetch(`${API_BASE_URL}/family/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to update family member");
+  }
+
+  return response.json();
+};
+
+/**
+ * Remove a family member
+ */
+export const removeFamilyMember = async (id) => {
+  const response = await fetch(`${API_BASE_URL}/family/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to remove family member");
+  }
+
+  return response.json();
+};
+
+/**
+ * Invite caretaker by email
+ */
+export const inviteCaretaker = async (inviteData) => {
+  const response = await fetch(`${API_BASE_URL}/family/invite`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(inviteData)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to invite caretaker");
+  }
+
+  return response.json();
+};
+
+/**
+ * Get emergency info for all family members
+ */
+export const getEmergencyInfo = async () => {
+  const response = await fetch(`${API_BASE_URL}/family/emergency`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch emergency info");
+  }
+
+  return response.json();
+};
+
 export default {
   uploadPrescription,
   getPrescription,
@@ -351,5 +457,13 @@ export default {
   logDose,
   getTodaysDoses,
   getAdherenceStats,
-  savePushSubscription
+  savePushSubscription,
+  // Family APIs
+  getFamilyMembers,
+  addFamilyMember,
+  updateFamilyMember: updateFamilyMember,
+  removeFamilyMember,
+  inviteCaretaker,
+  getEmergencyInfo
 };
+
