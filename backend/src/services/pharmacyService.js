@@ -1,117 +1,192 @@
 /**
  * Pharmacy Service
- * Provides nearby pharmacy search (mock data), medicine price comparison,
+ * Provides nearby pharmacy search (Kota, Rajasthan), medicine price comparison,
  * and refill request handling — no paid APIs required.
  */
 
-// ─── Mock Pharmacy Data ───────────────────────────────────────────
-// Realistic Indian pharmacy chains and local stores
-const MOCK_PHARMACIES = [
+// ─── Kota Pharmacy Data (13 pharmacies — 8 shown per request) ─────
+const KOTA_PHARMACIES = [
   {
-    placeId: "ph_apollo_001",
+    placeId: "ph_apollo_kota_001",
     name: "Apollo Pharmacy",
-    address: "Shop 12, MG Road, Near City Mall",
-    phone: "+91 98765 43210",
+    address: "Near Talwandi Circle, Talwandi, Kota",
+    phone: "+91 74424 01234",
     rating: 4.5,
-    totalRatings: 328,
+    totalRatings: 312,
     isOpen: true,
     openHours: "24 hours",
     type: "Chain Pharmacy",
-    distance: 0.8,
-    location: { lat: 0, lng: 0 },
+    distance: 0.6,
+    location: { lat: 25.1800, lng: 75.8648 },
   },
   {
-    placeId: "ph_medplus_002",
-    name: "MedPlus",
-    address: "45, Station Road, Opposite Railway Station",
-    phone: "+91 98765 43211",
+    placeId: "ph_medplus_kota_002",
+    name: "MedPlus Pharmacy",
+    address: "Shopping Centre, Gumanpura, Kota",
+    phone: "+91 74424 05678",
     rating: 4.2,
-    totalRatings: 215,
+    totalRatings: 198,
     isOpen: true,
     openHours: "8:00 AM – 11:00 PM",
     type: "Chain Pharmacy",
-    distance: 1.2,
-    location: { lat: 0, lng: 0 },
+    distance: 1.1,
+    location: { lat: 25.1760, lng: 75.8560 },
   },
   {
-    placeId: "ph_netmeds_003",
-    name: "Netmeds Store",
-    address: "Plot 8, Sector 15, Market Area",
-    phone: "+91 98765 43212",
+    placeId: "ph_janaushadhi_kota_003",
+    name: "Jan Aushadhi Kendra",
+    address: "MBS Hospital Campus, Nayapura, Kota",
+    phone: "+91 74424 09012",
     rating: 4.0,
-    totalRatings: 142,
+    totalRatings: 87,
+    isOpen: true,
+    openHours: "9:00 AM – 6:00 PM",
+    type: "Generic Medicine Store",
+    distance: 1.8,
+    location: { lat: 25.1720, lng: 75.8500 },
+  },
+  {
+    placeId: "ph_shree_kota_004",
+    name: "Shree Balaji Medical Store",
+    address: "Dadabari Main Road, Near Dadabari Circle, Kota",
+    phone: "+91 94141 23456",
+    rating: 4.4,
+    totalRatings: 276,
+    isOpen: true,
+    openHours: "7:30 AM – 10:30 PM",
+    type: "Local Pharmacy",
+    distance: 0.4,
+    location: { lat: 25.1845, lng: 75.8590 },
+  },
+  {
+    placeId: "ph_raj_kota_005",
+    name: "Raj Medical & General Store",
+    address: "Kunhari Bus Stand Road, Kunhari, Kota",
+    phone: "+91 94141 78901",
+    rating: 4.1,
+    totalRatings: 145,
+    isOpen: true,
+    openHours: "8:00 AM – 10:00 PM",
+    type: "Local Pharmacy",
+    distance: 3.2,
+    location: { lat: 25.1530, lng: 75.8420 },
+  },
+  {
+    placeId: "ph_mahaveer_kota_006",
+    name: "Mahaveer Medicos",
+    address: "Vigyan Nagar, Near Allen Career Institute, Kota",
+    phone: "+91 94141 34567",
+    rating: 4.3,
+    totalRatings: 203,
+    isOpen: true,
+    openHours: "8:00 AM – 11:00 PM",
+    type: "Local Pharmacy",
+    distance: 2.5,
+    location: { lat: 25.1640, lng: 75.8380 },
+  },
+  {
+    placeId: "ph_netmeds_kota_007",
+    name: "Netmeds Store",
+    address: "Rajeev Gandhi Nagar, Near Coaching Hub, Kota",
+    phone: "+91 74424 56789",
+    rating: 4.0,
+    totalRatings: 112,
     isOpen: true,
     openHours: "9:00 AM – 10:00 PM",
     type: "Online + Store",
     distance: 1.5,
-    location: { lat: 0, lng: 0 },
+    location: { lat: 25.1700, lng: 75.8530 },
   },
   {
-    placeId: "ph_wellness_004",
+    placeId: "ph_gupta_kota_008",
+    name: "Gupta Medical Hall",
+    address: "Chambal Garden Road, Nayapura, Kota",
+    phone: "+91 94141 45678",
+    rating: 4.6,
+    totalRatings: 342,
+    isOpen: true,
+    openHours: "7:00 AM – 11:00 PM",
+    type: "Local Pharmacy",
+    distance: 0.9,
+    location: { lat: 25.1780, lng: 75.8610 },
+  },
+  // ─── Extra 5 (shuffled in randomly) ─────────────────────────────
+  {
+    placeId: "ph_wellness_kota_009",
     name: "Wellness Forever",
-    address: "Ground Floor, Sunshine Complex, Main Street",
-    phone: "+91 98765 43213",
-    rating: 4.3,
-    totalRatings: 189,
+    address: "DCM Chowk, Borkhera, Kota",
+    phone: "+91 74424 11223",
+    rating: 4.2,
+    totalRatings: 167,
     isOpen: false,
     openHours: "8:00 AM – 10:30 PM",
     type: "Chain Pharmacy",
-    distance: 2.1,
-    location: { lat: 0, lng: 0 },
+    distance: 2.9,
+    location: { lat: 25.1580, lng: 75.8490 },
   },
   {
-    placeId: "ph_frank_005",
-    name: "Frank Ross Pharmacy",
-    address: "18, Park Lane, Near Hospital Junction",
-    phone: "+91 98765 43214",
-    rating: 4.1,
-    totalRatings: 97,
-    isOpen: true,
-    openHours: "7:30 AM – 11:00 PM",
-    type: "Chain Pharmacy",
-    distance: 2.8,
-    location: { lat: 0, lng: 0 },
-  },
-  {
-    placeId: "ph_jan_006",
-    name: "Jan Aushadhi Kendra",
-    address: "Government Hospital Complex, Ward 3",
-    phone: "+91 98765 43215",
+    placeId: "ph_sanjivani_kota_010",
+    name: "Sanjivani Medical Store",
+    address: "Rangbari Road, Near Rangbari Nala, Kota",
+    phone: "+91 94141 99887",
     rating: 3.9,
-    totalRatings: 64,
+    totalRatings: 73,
     isOpen: true,
-    openHours: "9:00 AM – 6:00 PM",
-    type: "Generic Medicine Store",
-    distance: 3.2,
-    location: { lat: 0, lng: 0 },
-  },
-  {
-    placeId: "ph_local_007",
-    name: "Sharma Medical Store",
-    address: "Near Bus Stand, Gandhi Nagar",
-    phone: "+91 98765 43216",
-    rating: 4.4,
-    totalRatings: 256,
-    isOpen: true,
-    openHours: "8:00 AM – 10:00 PM",
+    openHours: "8:30 AM – 9:30 PM",
     type: "Local Pharmacy",
-    distance: 0.5,
-    location: { lat: 0, lng: 0 },
+    distance: 3.8,
+    location: { lat: 25.1490, lng: 75.8350 },
   },
   {
-    placeId: "ph_1mg_008",
+    placeId: "ph_agrawal_kota_011",
+    name: "Agrawal Pharma",
+    address: "Keshavpura Circle, Near Kota Junction Railway Station",
+    phone: "+91 94141 66554",
+    rating: 4.3,
+    totalRatings: 189,
+    isOpen: true,
+    openHours: "7:00 AM – 10:00 PM",
+    type: "Local Pharmacy",
+    distance: 1.3,
+    location: { lat: 25.1750, lng: 75.8570 },
+  },
+  {
+    placeId: "ph_1mg_kota_012",
     name: "1mg Store",
-    address: "A-22, Tech Park Road, Sector 7",
-    phone: "+91 98765 43217",
+    address: "Indraprastha Industrial Area, Kota",
+    phone: "+91 74424 44332",
     rating: 4.0,
-    totalRatings: 178,
+    totalRatings: 95,
     isOpen: true,
     openHours: "9:00 AM – 9:00 PM",
     type: "Online + Store",
-    distance: 3.9,
-    location: { lat: 0, lng: 0 },
+    distance: 4.1,
+    location: { lat: 25.1450, lng: 75.8280 },
+  },
+  {
+    placeId: "ph_lifecare_kota_013",
+    name: "Lifecare Pharmacy",
+    address: "Rawatbhata Road, Near Agrasen Circle, Kota",
+    phone: "+91 94141 22334",
+    rating: 4.1,
+    totalRatings: 131,
+    isOpen: false,
+    openHours: "8:00 AM – 10:00 PM",
+    type: "Local Pharmacy",
+    distance: 3.5,
+    location: { lat: 25.1510, lng: 75.8400 },
   },
 ];
+
+// ─── Shuffle helper (Fisher-Yates) ────────────────────────────────
+function shuffleArray(arr) {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 // ─── Common Medicine Price Data ───────────────────────────────────
 const MEDICINE_PRICES = {
@@ -120,7 +195,7 @@ const MEDICINE_PRICES = {
     category: "Pain Relief / Fever",
     prices: [
       { brand: "Crocin 500mg", pack: "15 tablets", mrp: 30, discount: 12, pharmacy: "Apollo Pharmacy" },
-      { brand: "Dolo 650mg", pack: "15 tablets", mrp: 32, discount: 15, pharmacy: "MedPlus" },
+      { brand: "Dolo 650mg", pack: "15 tablets", mrp: 32, discount: 15, pharmacy: "MedPlus Pharmacy" },
       { brand: "Calpol 500mg", pack: "15 tablets", mrp: 28, discount: 10, pharmacy: "Netmeds Store" },
       { brand: "Generic Paracetamol 500mg", pack: "10 tablets", mrp: 10, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
@@ -130,8 +205,8 @@ const MEDICINE_PRICES = {
     category: "Antibiotic",
     prices: [
       { brand: "Mox 500mg", pack: "10 capsules", mrp: 95, discount: 18, pharmacy: "Apollo Pharmacy" },
-      { brand: "Amoxil 500mg", pack: "10 capsules", mrp: 110, discount: 20, pharmacy: "MedPlus" },
-      { brand: "Novamox 500mg", pack: "10 capsules", mrp: 88, discount: 12, pharmacy: "Wellness Forever" },
+      { brand: "Amoxil 500mg", pack: "10 capsules", mrp: 110, discount: 20, pharmacy: "MedPlus Pharmacy" },
+      { brand: "Novamox 500mg", pack: "10 capsules", mrp: 88, discount: 12, pharmacy: "Gupta Medical Hall" },
       { brand: "Generic Amoxicillin 500mg", pack: "10 capsules", mrp: 35, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
   },
@@ -140,8 +215,8 @@ const MEDICINE_PRICES = {
     category: "Antacid / Gastric",
     prices: [
       { brand: "Omez 20mg", pack: "15 capsules", mrp: 95, discount: 15, pharmacy: "Apollo Pharmacy" },
-      { brand: "Pan 20mg", pack: "15 capsules", mrp: 85, discount: 12, pharmacy: "MedPlus" },
-      { brand: "Ocid 20mg", pack: "15 capsules", mrp: 78, discount: 10, pharmacy: "Frank Ross Pharmacy" },
+      { brand: "Pan 20mg", pack: "15 capsules", mrp: 85, discount: 12, pharmacy: "MedPlus Pharmacy" },
+      { brand: "Ocid 20mg", pack: "15 capsules", mrp: 78, discount: 10, pharmacy: "Shree Balaji Medical Store" },
       { brand: "Generic Omeprazole 20mg", pack: "10 capsules", mrp: 18, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
   },
@@ -150,8 +225,8 @@ const MEDICINE_PRICES = {
     category: "Diabetes",
     prices: [
       { brand: "Glycomet 500mg", pack: "20 tablets", mrp: 42, discount: 10, pharmacy: "Apollo Pharmacy" },
-      { brand: "Glucophage 500mg", pack: "20 tablets", mrp: 68, discount: 18, pharmacy: "MedPlus" },
-      { brand: "Obimet 500mg", pack: "20 tablets", mrp: 38, discount: 8, pharmacy: "Sharma Medical Store" },
+      { brand: "Glucophage 500mg", pack: "20 tablets", mrp: 68, discount: 18, pharmacy: "MedPlus Pharmacy" },
+      { brand: "Obimet 500mg", pack: "20 tablets", mrp: 38, discount: 8, pharmacy: "Mahaveer Medicos" },
       { brand: "Generic Metformin 500mg", pack: "10 tablets", mrp: 12, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
   },
@@ -160,7 +235,7 @@ const MEDICINE_PRICES = {
     category: "Antibiotic",
     prices: [
       { brand: "Azithral 500mg", pack: "5 tablets", mrp: 98, discount: 15, pharmacy: "Apollo Pharmacy" },
-      { brand: "Zithromax 500mg", pack: "5 tablets", mrp: 120, discount: 20, pharmacy: "MedPlus" },
+      { brand: "Zithromax 500mg", pack: "5 tablets", mrp: 120, discount: 20, pharmacy: "MedPlus Pharmacy" },
       { brand: "Azee 500mg", pack: "5 tablets", mrp: 90, discount: 12, pharmacy: "Netmeds Store" },
       { brand: "Generic Azithromycin 500mg", pack: "3 tablets", mrp: 25, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
@@ -170,7 +245,7 @@ const MEDICINE_PRICES = {
     category: "Allergy / Antihistamine",
     prices: [
       { brand: "Cetzine 10mg", pack: "10 tablets", mrp: 35, discount: 10, pharmacy: "Apollo Pharmacy" },
-      { brand: "Alerid 10mg", pack: "10 tablets", mrp: 32, discount: 12, pharmacy: "MedPlus" },
+      { brand: "Alerid 10mg", pack: "10 tablets", mrp: 32, discount: 12, pharmacy: "MedPlus Pharmacy" },
       { brand: "Okacet 10mg", pack: "10 tablets", mrp: 30, discount: 8, pharmacy: "Wellness Forever" },
       { brand: "Generic Cetirizine 10mg", pack: "10 tablets", mrp: 8, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
@@ -180,8 +255,8 @@ const MEDICINE_PRICES = {
     category: "Pain Relief / Anti-inflammatory",
     prices: [
       { brand: "Brufen 400mg", pack: "15 tablets", mrp: 32, discount: 10, pharmacy: "Apollo Pharmacy" },
-      { brand: "Ibugesic 400mg", pack: "15 tablets", mrp: 28, discount: 8, pharmacy: "Sharma Medical Store" },
-      { brand: "Combiflam (Ibu+Para)", pack: "20 tablets", mrp: 52, discount: 15, pharmacy: "MedPlus" },
+      { brand: "Ibugesic 400mg", pack: "15 tablets", mrp: 28, discount: 8, pharmacy: "Gupta Medical Hall" },
+      { brand: "Combiflam (Ibu+Para)", pack: "20 tablets", mrp: 52, discount: 15, pharmacy: "MedPlus Pharmacy" },
       { brand: "Generic Ibuprofen 400mg", pack: "10 tablets", mrp: 10, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
   },
@@ -190,25 +265,27 @@ const MEDICINE_PRICES = {
     category: "Cholesterol",
     prices: [
       { brand: "Atorva 10mg", pack: "15 tablets", mrp: 135, discount: 18, pharmacy: "Apollo Pharmacy" },
-      { brand: "Lipitor 10mg", pack: "15 tablets", mrp: 165, discount: 22, pharmacy: "MedPlus" },
-      { brand: "Tonact 10mg", pack: "15 tablets", mrp: 120, discount: 12, pharmacy: "Frank Ross Pharmacy" },
+      { brand: "Lipitor 10mg", pack: "15 tablets", mrp: 165, discount: 22, pharmacy: "MedPlus Pharmacy" },
+      { brand: "Tonact 10mg", pack: "15 tablets", mrp: 120, discount: 12, pharmacy: "Shree Balaji Medical Store" },
       { brand: "Generic Atorvastatin 10mg", pack: "10 tablets", mrp: 30, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
     ],
   },
 };
 
 /**
- * Search nearby pharmacies (mock data with dynamic distance)
+ * Search nearby pharmacies — shuffles 13 Kota stores, returns 8 random
  */
 export const searchNearbyPharmacies = async (lat, lng, radius = 5000) => {
-  // Simulate dynamic distances based on input coordinates
-  const pharmacies = MOCK_PHARMACIES.map((ph) => ({
+  // Shuffle all 13 pharmacies and pick 8
+  const picked = shuffleArray(KOTA_PHARMACIES).slice(0, 8);
+
+  // Add slight distance variation for a fresh feel each request
+  const pharmacies = picked.map((ph) => ({
     ...ph,
-    // Randomize distance slightly for each request to feel dynamic
-    distance: +(ph.distance + (Math.random() * 0.3 - 0.15)).toFixed(1),
+    distance: +(ph.distance + (Math.random() * 0.4 - 0.2)).toFixed(1),
     location: {
-      lat: lat + (Math.random() * 0.01 - 0.005),
-      lng: lng + (Math.random() * 0.01 - 0.005),
+      lat: ph.location.lat + (Math.random() * 0.002 - 0.001),
+      lng: ph.location.lng + (Math.random() * 0.002 - 0.001),
     },
   }));
 
@@ -226,10 +303,9 @@ export const searchNearbyPharmacies = async (lat, lng, radius = 5000) => {
  * Get pharmacy details by placeId
  */
 export const getPharmacyDetails = async (placeId) => {
-  const pharmacy = MOCK_PHARMACIES.find((ph) => ph.placeId === placeId);
+  const pharmacy = KOTA_PHARMACIES.find((ph) => ph.placeId === placeId);
   if (!pharmacy) return null;
 
-  // Add extra detail fields
   return {
     ...pharmacy,
     website: "https://www.example.com",
@@ -253,7 +329,6 @@ export const compareMedicinePrices = async (medicineName) => {
   let priceData = MEDICINE_PRICES[key];
 
   if (!priceData) {
-    // Try partial match
     const matchedKey = Object.keys(MEDICINE_PRICES).find(
       (k) => key.includes(k) || k.includes(key)
     );
@@ -267,8 +342,8 @@ export const compareMedicinePrices = async (medicineName) => {
       category: "General Medicine",
       prices: [
         { brand: `${medicineName} (Brand A)`, pack: "10 tablets", mrp: 85, discount: 12, pharmacy: "Apollo Pharmacy" },
-        { brand: `${medicineName} (Brand B)`, pack: "10 tablets", mrp: 72, discount: 10, pharmacy: "MedPlus" },
-        { brand: `${medicineName} (Brand C)`, pack: "10 tablets", mrp: 68, discount: 8, pharmacy: "Wellness Forever" },
+        { brand: `${medicineName} (Brand B)`, pack: "10 tablets", mrp: 72, discount: 10, pharmacy: "MedPlus Pharmacy" },
+        { brand: `${medicineName} (Brand C)`, pack: "10 tablets", mrp: 68, discount: 8, pharmacy: "Gupta Medical Hall" },
         { brand: `${medicineName} (Generic)`, pack: "10 tablets", mrp: 20, discount: 0, pharmacy: "Jan Aushadhi Kendra" },
       ],
     };
@@ -294,9 +369,7 @@ export const compareMedicinePrices = async (medicineName) => {
  * Process a refill request
  */
 export const processRefillRequest = async (requestData) => {
-  // In a real app, this could send an email/SMS to the pharmacy
-  // For now, return a confirmation with an estimated time
-  const estimatedTime = Math.floor(Math.random() * 3) + 1; // 1-3 hours
+  const estimatedTime = Math.floor(Math.random() * 3) + 1;
 
   return {
     success: true,
