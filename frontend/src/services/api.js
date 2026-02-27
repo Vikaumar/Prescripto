@@ -439,6 +439,88 @@ export const getEmergencyInfo = async () => {
   return response.json();
 };
 
+// ============ PHARMACY API FUNCTIONS ============
+
+/**
+ * Search nearby pharmacies
+ */
+export const searchPharmacies = async (lat, lng, radius = 5000) => {
+  const response = await fetch(
+    `${API_BASE_URL}/pharmacy/search?lat=${lat}&lng=${lng}&radius=${radius}`
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to search pharmacies");
+  }
+
+  return response.json();
+};
+
+/**
+ * Get pharmacy details
+ */
+export const getPharmacyDetails = async (placeId) => {
+  const response = await fetch(`${API_BASE_URL}/pharmacy/details/${placeId}`);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch pharmacy details");
+  }
+
+  return response.json();
+};
+
+/**
+ * Compare medicine prices across pharmacies
+ */
+export const compareMedicinePrices = async (medicineName) => {
+  const response = await fetch(
+    `${API_BASE_URL}/pharmacy/prices/${encodeURIComponent(medicineName)}`
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to compare prices");
+  }
+
+  return response.json();
+};
+
+/**
+ * Submit a refill request
+ */
+export const submitRefillRequest = async (requestData) => {
+  const response = await fetch(`${API_BASE_URL}/pharmacy/refill`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(requestData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to submit refill request");
+  }
+
+  return response.json();
+};
+
+/**
+ * Get refill request history
+ */
+export const getRefillHistory = async () => {
+  const response = await fetch(`${API_BASE_URL}/pharmacy/refills`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch refill history");
+  }
+
+  return response.json();
+};
+
 export default {
   uploadPrescription,
   getPrescription,
@@ -464,6 +546,12 @@ export default {
   updateFamilyMember: updateFamilyMember,
   removeFamilyMember,
   inviteCaretaker,
-  getEmergencyInfo
+  getEmergencyInfo,
+  // Pharmacy APIs
+  searchPharmacies,
+  getPharmacyDetails,
+  compareMedicinePrices,
+  submitRefillRequest,
+  getRefillHistory,
 };
 
