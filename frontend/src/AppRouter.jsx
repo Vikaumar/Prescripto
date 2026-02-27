@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import RemindersPage from "./pages/RemindersPage";
 import FamilyPage from "./pages/FamilyPage";
+import PharmacyPage from "./pages/PharmacyPage";
 import App from "./App";
 import Loader from "./components/Loader";
 
@@ -99,6 +100,15 @@ function AppRouter() {
                 element={
                     <ProtectedRoute>
                         <FamilyPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/pharmacy"
+                element={
+                    <ProtectedRoute>
+                        <PharmacyPage />
                     </ProtectedRoute>
                 }
             />
