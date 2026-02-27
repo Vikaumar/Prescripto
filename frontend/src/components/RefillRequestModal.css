@@ -1,0 +1,320 @@
+.refill-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: refillFadeIn 0.2s ease;
+}
+
+@keyframes refillFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.refill-modal {
+    background: var(--card-bg, #ffffff);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: refillSlideUp 0.3s ease;
+    overflow: hidden;
+}
+
+@keyframes refillSlideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.refill-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 16px;
+}
+
+.refill-modal-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary, #1a1a2e);
+    margin: 0;
+}
+
+.refill-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.refill-close-btn:hover {
+    background: #e5e7eb;
+}
+
+/* Form */
+.refill-form {
+    padding: 0 24px 24px;
+}
+
+.refill-form-group {
+    margin-bottom: 16px;
+}
+
+.refill-form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary, #374151);
+    margin-bottom: 6px;
+}
+
+.refill-form-group input,
+.refill-form-group textarea,
+.refill-form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--text-primary, #1a1a2e);
+    background: var(--card-bg, #ffffff);
+    transition: border-color 0.2s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.refill-form-group input:focus,
+.refill-form-group textarea:focus,
+.refill-form-group select:focus {
+    border-color: #10b981;
+}
+
+.refill-form-group textarea {
+    resize: vertical;
+    min-height: 72px;
+}
+
+.refill-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 12px;
+}
+
+.refill-error {
+    padding: 10px 14px;
+    background: #fef2f2;
+    color: #dc2626;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.refill-form-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 8px;
+}
+
+.refill-cancel-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-secondary, #6b7280);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.refill-cancel-btn:hover {
+    border-color: #d1d5db;
+    background: #f9fafb;
+}
+
+.refill-submit-btn {
+    flex: 1.5;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.refill-submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.refill-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.refill-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: refillSpin 0.6s linear infinite;
+}
+
+@keyframes refillSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success State */
+.refill-success {
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.refill-success h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary, #1a1a2e);
+    margin: 0 0 8px;
+}
+
+.refill-success p {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #6b7280);
+    margin: 0 0 20px;
+}
+
+.success-details {
+    background: #f0fdf4;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.success-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.85rem;
+}
+
+.success-detail-row:not(:last-child) {
+    border-bottom: 1px solid #dcfce7;
+}
+
+.success-detail-row span {
+    color: var(--text-secondary, #6b7280);
+}
+
+.success-detail-row strong {
+    color: var(--text-primary, #1a1a2e);
+}
+
+.refill-done-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.refill-done-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .refill-modal {
+        background: #1e1e2e;
+    }
+
+    .refill-modal-header h2,
+    .refill-success h3 {
+        color: #f1f5f9;
+    }
+
+    .refill-close-btn {
+        background: #2e2e3e;
+        color: #94a3b8;
+    }
+
+    .refill-form-group label {
+        color: #cbd5e1;
+    }
+
+    .refill-form-group input,
+    .refill-form-group textarea {
+        background: #2e2e3e;
+        border-color: #3e3e4e;
+        color: #f1f5f9;
+    }
+
+    .refill-cancel-btn {
+        border-color: #3e3e4e;
+        color: #94a3b8;
+    }
+
+    .refill-error {
+        background: #450a0a;
+        color: #fca5a5;
+    }
+
+    .success-details {
+        background: #064e3b;
+    }
+
+    .success-detail-row:not(:last-child) {
+        border-bottom-color: #065f46;
+    }
+
+    .success-detail-row strong {
+        color: #f1f5f9;
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .refill-modal {
+        border-radius: 16px 16px 0 0;
+        align-self: flex-end;
+    }
+
+    .refill-form-row {
+        grid-template-columns: 1fr;
+    }
+}
