@@ -119,7 +119,6 @@ function LandingPage() {
                                     <path d="m21 21-4.35-4.35" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 1</span>
                             <h3>Smart OCR Scan</h3>
                             <p>Upload a photo and our AI reads even the most challenging handwritten prescriptions accurately.</p>
                         </div>
@@ -129,7 +128,6 @@ function LandingPage() {
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 1</span>
                             <h3>AI Explanations</h3>
                             <p>Get plain-language breakdowns of medicines, dosages, side effects, and drug interactions.</p>
                         </div>
@@ -141,7 +139,6 @@ function LandingPage() {
                                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 1</span>
                             <h3>13+ Languages</h3>
                             <p>Understand prescriptions in Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, and more.</p>
                         </div>
@@ -153,7 +150,7 @@ function LandingPage() {
                                     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 2</span>
+
                             <h3>Medicine Reminders</h3>
                             <p>Smart notifications before, during, and after meals — never miss a dose again.</p>
                         </div>
@@ -164,7 +161,7 @@ function LandingPage() {
                                     <polyline points="12 6 12 12 16 14" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 2</span>
+
                             <h3>Dosage Tracking</h3>
                             <p>Track medicine schedules with frequency, timing, and duration to stay on routine.</p>
                         </div>
@@ -178,7 +175,7 @@ function LandingPage() {
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 3</span>
+
                             <h3>Family Care</h3>
                             <p>Manage prescriptions for your whole family. Add members, assign roles, and share access securely.</p>
                         </div>
@@ -188,7 +185,7 @@ function LandingPage() {
                                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 3</span>
+
                             <h3>Emergency Contacts</h3>
                             <p>Store emergency contacts, blood types, allergies, and medical conditions — always accessible.</p>
                         </div>
@@ -199,7 +196,7 @@ function LandingPage() {
                                     <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 4</span>
+
                             <h3>Pharmacy Finder</h3>
                             <p>Discover nearby pharmacies with real-time status, ratings, directions, and one-tap calling.</p>
                         </div>
@@ -210,7 +207,7 @@ function LandingPage() {
                                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                                 </svg>
                             </div>
-                            <span className="lp-feat-phase">Phase 4</span>
+
                             <h3>Price Comparison</h3>
                             <p>Compare medicine prices across pharmacies. Find the best deals and save money on every purchase.</p>
                         </div>
