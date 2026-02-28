@@ -42,7 +42,7 @@ function PublicRoute({ children }) {
     }
 
     if (isAuthenticated) {
-        return <Navigate to="/app" replace />;
+        return <Navigate to="/dashboard" replace />;
     }
 
     return children;

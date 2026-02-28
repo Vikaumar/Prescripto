@@ -22,7 +22,7 @@ function LandingPage() {
                     </div>
                     <div className="lp-nav-actions">
                         {isAuthenticated ? (
-                            <Link to="/app" className="lp-btn-pill filled">Go to App</Link>
+                            <Link to="/dashboard" className="lp-btn-pill filled">Go to App</Link>
                         ) : (
                             <>
                                 <Link to="/signup" className="lp-btn-pill filled">Get Started</Link>
