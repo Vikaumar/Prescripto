@@ -158,20 +158,25 @@
     grid-template-columns: 1fr 1fr;
     gap: 48px;
     align-items: center;
+    width: 100%;
 }
 
 .lp-hero-text {
     animation: slideUp 0.8s ease-out;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .lp-headline {
-    font-size: 3.4rem;
+    font-size: clamp(2rem, 4vw, 3.2rem);
     font-weight: 900;
     line-height: 1.12;
     color: #18181b;
     letter-spacing: -0.03em;
     margin: 0 0 20px;
     overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .lp-subtext {
@@ -227,6 +232,7 @@
     position: relative;
     height: 420px;
     animation: fadeIn 1s ease-out 0.4s both;
+    min-width: 0;
 }
 
 .lp-hero-blob {
