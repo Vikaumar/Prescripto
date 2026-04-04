@@ -18,6 +18,11 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
+    // Allow production frontend (Vercel)
+    if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    
     // Allow localhost variations
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
       return callback(null, true);
