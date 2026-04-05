@@ -18,7 +18,6 @@
 
 ## 📸 Screenshots
 
-> 🚧 **Note:** Screenshots are currently being prepared and will be added here shortly to showcase our beautiful interface!
 
 <div align="center">
   <table>
