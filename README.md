@@ -23,14 +23,28 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center"><em>Dashboard Preview</em><br/><br/>[🖼️ Placeholder]</td>
-      <td align="center"><em>AI Analysis Result</em><br/><br/>[🖼️ Placeholder]</td>
+      <td align="center">
+        <b>Dashboard Preview</b><br/>
+        <img src="docs/screenshots/dashboard.png" width="400" alt="Dashboard" />
+      </td>
+      <td align="center">
+        <b>AI Analysis Result</b><br/>
+        <img src="docs/screenshots/analysis.png" width="400" alt="Analysis Result" />
+      </td>
     </tr>
     <tr>
-      <td align="center"><em>Prescription Upload</em><br/><br/>[🖼️ Placeholder]</td>
-      <td align="center"><em>Profile Management</em><br/><br/>[🖼️ Placeholder]</td>
+      <td align="center">
+        <b>Prescription Upload</b><br/>
+        <img src="docs/screenshots/upload.png" width="400" alt="Prescription Upload" />
+      </td>
+      <td align="center">
+        <b>Chatbot Interface</b><br/>
+        <img src="docs/screenshots/chatbot.png" width="400" alt="Chatbot Interface" />
+      </td>
     </tr>
   </table>
+  <br />
+  <img src="docs/screenshots/landing.png" width="820" alt="Landing Page" style="border-radius: 8px;" />
 </div>
 
 ---
