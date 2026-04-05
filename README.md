@@ -1,40 +1,71 @@
-# 💊 Prescripto
+<div align="center">
+  <h1>💊 Prescripto</h1>
+  <b>Understand your prescription in simple words.</b>
+  
+  <br />
+  <br />
 
-![Prescripto Header](https://via.placeholder.com/1200x300.png?text=Prescripto+-+Smart+Prescription+Manager)
+  <p>
+    An intelligent, modern platform for managing prescriptions, family health, and medical reminders. Built with AI to simplify complex medical jargon.
+  </p>
 
-> **An intelligent, modern platform for managing prescriptions, family health, and medical reminders.**
+  <!-- Live Link Placeholder -->
+  > 🌐 **Live Demo:** *Coming Soon!*
+
+</div>
+
+<hr />
+
+## 📸 Screenshots
+
+> 🚧 **Note:** Screenshots are currently being prepared and will be added here shortly to showcase our beautiful interface!
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><em>Dashboard Preview</em><br/><br/>[🖼️ Placeholder]</td>
+      <td align="center"><em>AI Analysis Result</em><br/><br/>[🖼️ Placeholder]</td>
+    </tr>
+    <tr>
+      <td align="center"><em>Prescription Upload</em><br/><br/>[🖼️ Placeholder]</td>
+      <td align="center"><em>Profile Management</em><br/><br/>[🖼️ Placeholder]</td>
+    </tr>
+  </table>
+</div>
 
 ---
 
 ## 🌟 Overview
 
-**Prescripto** is a comprehensive medical management application designed to simplify the way patients and their caregivers handle prescriptions. Built with a stunning modern user interface, the platform offers smart prescription analysis, seamless camera integration for document scanning, and robust features for family and caretaker coordination.
+**Prescripto** is a comprehensive medical management application designed to simplify the way patients and their caregivers handle prescriptions. By leveraging AI, Prescripto can extract text from prescription images and provide simplified explanations of medicines, diagnoses, and doctor's notes. 
+
+Built with a stunning modern user interface, the platform offers smart prescription analysis, seamless camera integration for document scanning, and robust features for user management.
 
 ---
 
 ## ✨ Key Features
 
 - **📸 Smart Prescription Uploads**: Easily upload prescriptions or scan them directly using your device's camera.
-- **🤖 Automated Analysis**: AI-powered extraction and analysis of prescription details.
-- **👨‍👩‍👧‍👦 Family & Caretaker Hub**: Manage health records for family members, share access securely, and store emergency contact information.
-- **⏰ Smart Reminders**: Never miss a dose with automated medication reminders.
-- **🌗 Modern UI/UX**: A beautiful, dynamic design featuring sleek animations and a fully responsive layout.
+- **🤖 AI-Powered Analysis**: Extract and analyze prescription details automatically. Understand your medicines and doctors' notes in plain language.
+- **🌍 Multi-Language Support**: Translate the AI analysis into various languages (Hindi, Spanish, French, etc.) instantly.
+- **🔐 Secure Authentication**: JWT-based authentication to keep your medical data private and secure.
+- **👤 User Dashboard**: Manage your profile, view prescription history, and update your avatar.
+- **🌗 Modern UI/UX**: A beautiful, dynamic design featuring sleek animations and a fully responsive layout built with React.
 
 ---
 
 ## 🚀 Tech Stack
 
-Prescripto is fully built as a modern web application:
-
 ### Frontend
-- **React.js**: For a dynamic, responsive UI.
-- **Vanilla CSS**: Custom styling with an emphasis on rich aesthetics, smooth gradients, and micro-animations.
-- **Vite / Next.js**: Fast bundling and optimized production builds.
+- **React.js** (Vite): For a lightning-fast, dynamic, and responsive UI.
+- **Vanilla CSS**: Custom styling with an emphasis on rich aesthetics, smooth gradients, glassmorphism, and micro-animations.
+- **React Router Dom**: For seamless client-side routing.
 
 ### Backend
-- **Node.js**: Scalable and asynchronous backend operations.
-- **Express.js**: RESTful API architecture.
-- **MongoDB**: Flexible NoSQL database for structured storage of users, prescriptions, and family profiles.
+- **Node.js & Express.js**: Scalable and asynchronous RESTful API architecture.
+- **MongoDB & Mongoose**: Flexible NoSQL database for structured storage of users and prescriptions.
+- **JSON Web Tokens (JWT)**: Secure user authentication and session management.
+- **Groq API**: High-performance AI processing for OCR and medical text simplification.
 
 ---
 
@@ -45,34 +76,52 @@ To get a local copy up and running, follow these simple steps.
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v16.0 or higher recommended)
-- npm or yarn
+- [MongoDB](https://www.mongodb.com/) (Local or Atlas)
+- **Groq API Key**: Needed for the AI features.
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/Prescripto.git
+   git clone https://github.com/Vikaumar/Prescripto.git
    cd Prescripto
    ```
 
-2. **Install Backend Dependencies**
+2. **Setup Backend**
    ```bash
    cd backend
    npm install
    ```
-
-3. **Install Frontend Dependencies**
+   *Create a `.env` file in the `backend` directory:*
+   ```env
+   PORT=5000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   NODE_ENV=development
+   GROQ_API_KEY=your_groq_api_key
+   ```
+   *Start the backend server:*
    ```bash
-   cd ../frontend
-   npm install
+   npm run dev
    ```
 
-4. **Environment Variables**
-   Create `.env` files in both `frontend` and `backend` directories and add your specific configuration (e.g., Database URIs, API keys, Port settings).
+3. **Setup Frontend**
+   ```bash
+   # Open a new terminal from the root folder
+   cd frontend
+   npm install
+   ```
+   *Create a `.env` file in the `frontend` directory:*
+   ```env
+   VITE_API_URL=http://localhost:5000/api
+   ```
+   *Start the frontend development server:*
+   ```bash
+   npm run dev
+   ```
 
-5. **Run the Application**
-   - For backend: `npm run dev`
-   - For frontend: `npm run dev`
+4. **Open in Browser**
+   Navigate to `http://localhost:5173` to explore Prescripto!
 
 ---
 
@@ -87,7 +136,7 @@ Aesthetics are a core functionality in Prescripto. The application features:
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](#) if you want to contribute.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Vikaumar/Prescripto/issues) if you want to contribute.
 
 ---
 
@@ -95,4 +144,8 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-<i>Built with ❤️ by Prescripto Team</i>
+<br />
+
+<div align="center">
+  <i>Built with ❤️ by the Prescripto Team</i>
+</div>
